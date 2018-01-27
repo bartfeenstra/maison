@@ -5,5 +5,8 @@ language: generic
 services:
   - docker
 
+before_script:
+  - ./bin/build
+
 script:
-  - docker-compose up -d
+  - ./bin/run
