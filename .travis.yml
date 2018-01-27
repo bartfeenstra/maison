@@ -9,4 +9,4 @@ before_script:
   - ./bin/build
 
 script:
-  - ./bin/run
+  - ./bin/test
