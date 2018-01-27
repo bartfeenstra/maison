@@ -2,9 +2,9 @@
 
 cd `dirname "$0"`/..
 
-./build
-./run
+./bin/build
+./bin/run
 
 curl http://localhost:8080
 
-./stop
+./bin/stop
