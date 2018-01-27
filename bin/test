@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd `dirname "$0"`/..
+
+./build
+./run
+
+curl http://localhost:8080
+
+./stop
