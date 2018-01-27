@@ -1,0 +1,11 @@
+version: '3.4'
+services:
+  alfred:
+    image: alfred:alfred
+    build: .
+    expose:
+     - "9010"
+     - "9090"
+    ports:
+     - "9010"
+     - "9090"
