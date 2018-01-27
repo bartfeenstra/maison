@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+cd `dirname "$0"`/..
+
+# Build alfred.
+pushd ./alfred
+if [ -d ./app ]
+then
+    pushd ./app
+    git pull
+    popd
+else
+    git clone https://github.com/bartfeenstra/alfred.git app
+fi
+popd
+
+# Build alfred-client.
+pushd ./alfred-client
+if [ -d ./app ]
+then
+    pushd ./app
+    git pull
+    popd
+else
+    git clone https://github.com/bartfeenstra/alfred-client.git app
+fi
+popd
+
+docker-compose build
