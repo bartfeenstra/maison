@@ -7,6 +7,6 @@ WORKDIR /opt/alfred-client
 
 RUN npm install
 
-ENTRYPOINT ["/usr/local/bin/npm", "run", "dev"]
+CMD ["/usr/local/bin/npm", "run", "dev"]
 
 EXPOSE 80
