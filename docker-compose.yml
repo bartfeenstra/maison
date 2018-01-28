@@ -4,9 +4,11 @@ services:
     image: alfred:alfred
     build: ./alfred
     expose:
+     - "5000"
      - "9010"
      - "9090"
     ports:
+     - "8081:5000"
      - "9010:9010"
      - "9090:9090"
   alfred-client:
