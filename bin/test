@@ -8,7 +8,7 @@ trap '(( exit_code |= $? ))' ERR
 
 ./bin/build
 ./bin/run
-sleep 1
+sleep 3
 
 curl http://localhost:8081/about/json/schema
 curl http://localhost:8080
