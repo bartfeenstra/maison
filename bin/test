@@ -8,6 +8,7 @@ trap '(( exit_code |= $? ))' ERR
 
 ./bin/build
 ./bin/run
+sleep 3
 
 ## Connect to Alfred.
 #curl http://localhost:8081/about/json/schema
