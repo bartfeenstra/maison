@@ -7,10 +7,13 @@ pushd ./alfred
 if [ -d ./app ]
 then
     pushd ./app
+    git reset --hard
+    git clean -df
+    git checkout master
     git pull
     popd
 else
-    git clone https://github.com/bartfeenstra/alfred.git app
+    git clone --branch master https://github.com/bartfeenstra/alfred.git app
 fi
 popd
 
@@ -19,10 +22,13 @@ pushd ./alfred-client
 if [ -d ./app ]
 then
     pushd ./app
+    git reset --hard
+    git clean -df
+    git checkout master
     git pull
     popd
 else
-    git clone https://github.com/bartfeenstra/alfred-client.git app
+    git clone --branch master https://github.com/bartfeenstra/alfred-client.git app
 fi
 popd
 
