@@ -8,13 +8,14 @@ trap '(( exit_code |= $? ))' ERR
 
 ./bin/build
 ./bin/run
+sleep 9
 
-# Connect to Alfred.
-#curl http://localhost:8081/about/json/schema
-## Connect to OLA.
-#curl http://localhost:9090
 # Connect to the Alfred client.
 curl http://localhost:8082
+# Connect to Alfred.
+curl http://localhost:8081/about/json/schema
+# Connect to OLA.
+curl http://localhost:9090
 
 ./bin/stop
 
