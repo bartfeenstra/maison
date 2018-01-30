@@ -1,16 +1,21 @@
 version: '3.4'
 services:
+  ola:
+    image: alfred:ola
+    build: ./ola
+    expose:
+     - "9010"
+     - "9090"
+    ports:
+     - "9010:9010"
+     - "9090:9090"
   alfred:
     image: alfred:alfred
     build: ./alfred
     expose:
      - "5000"
-     - "9010"
-     - "9090"
     ports:
      - "8081:5000"
-     - "9010:9010"
-     - "9090:9090"
   alfred-client:
     image: alfred:alfred-client
     build: ./alfred-client
