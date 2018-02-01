@@ -11,9 +11,9 @@ trap '(( exit_code |= $? ))' ERR
 sleep 3
 
 # Connect to Alfred.
-curl http://localhost/api/about/json/schema
+curl -fs http://alfred.bartfeenstra.com/api/about/json/schema > /dev/null
 # Connect to the Alfred client.
-curl http://localhost
+curl -fs http://alfred.bartfeenstra.com > /dev/null
 
 ./bin/stop
 
