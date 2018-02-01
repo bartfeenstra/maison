@@ -1,14 +1,41 @@
 ARG alfred_version=master
 
-FROM python:3.6-jessie
+FROM python:3.6-stretch
 
-RUN apt-get install -y git
-ARG alfred_version
-RUN git clone --branch $alfred_version https://github.com/bartfeenstra/alfred.git /opt/alfred
+ENV TERM linux
+ENV ENV DEBIAN_FRONTEND noninteractive
+
+COPY ./entrypoint.sh /opt/maison/entrypoint.sh
+
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y apt-utils \
+        sudo \
+        ola \
+        git \
+    # Clean caches for a smaller build.
+    && apt-get autoremove \
+    && apt-get clean \
+    && rm -rf /opt/ola.tar.gz \
+    && rm -rf /tmp/* /var/tmp/*
+
+# The ola package creates an "olad" user and sets its home, but fails to create it.
+RUN mkdir /usr/lib/olad
+RUN chown olad:olad -R /usr/lib/olad
+USER olad
+# Disable unused OLA plugins.
+RUN mkdir /usr/lib/olad/.ola/
+RUN for pt in "artnet" "dummy" "e131" "espnet" "gpio" "karate" "kinet" "milinst" "opendmx" "openpixelcontrol" "osc" "pathport" "renard" "sandnet" "shownet" "spi" "stageprofi" "usbserial" "uartdmx" "usbdmx"; do echo "enabled = false" > /usr/lib/olad/.ola/ola-$pt.conf; done
+# Enable FTDI devices.
+# @todo Enable this again once the USB device exists.
+#RUN echo "enabled = true" > /usr/lib/olad/.ola/ola-ftdidmx.conf
+
+USER root
+RUN git clone https://github.com/bartfeenstra/alfred.git /opt/alfred
 WORKDIR /opt/alfred
+ARG alfred_version
 RUN git checkout $alfred_version
 RUN pip install -r requirements-dev-frozen.txt
 
-ENTRYPOINT ["uwsgi", "--http-socket", "0.0.0.0:5000", "-p", "4", "--manage-script-name", "--master", "--no-orphans", "--mount", "/=alfred_http.flask.entry_point:app", "--pyargv", "alfred_maison.extension.MaisonExtension"]
+CMD sh /opt/maison/entrypoint.sh
 
-EXPOSE 5000
+EXPOSE 5000 9010 9090

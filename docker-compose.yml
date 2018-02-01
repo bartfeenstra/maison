@@ -1,20 +1,14 @@
 version: '3.4'
 services:
-  ola:
-    image: alfred:ola
-    build: ./ola
-    expose:
-     - "9010"
-     - "9090"
-    ports:
-     - "9010:9010"
   alfred:
     image: alfred:alfred
     build: ./alfred
     expose:
      - "5000"
-    depends_on:
-      - ola
+     - "9010"
+     - "9090"
+    ports:
+     - "9090:9090"
     networks:
       maison:
         aliases:
