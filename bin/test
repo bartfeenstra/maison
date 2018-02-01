@@ -11,11 +11,9 @@ trap '(( exit_code |= $? ))' ERR
 sleep 3
 
 # Connect to Alfred.
-curl http://localhost:8081/about/json/schema
-# Connect to OLA.
-curl http://localhost:8083
+curl http://localhost/api/about/json/schema
 # Connect to the Alfred client.
-curl http://localhost:8082
+curl http://localhost
 
 ./bin/stop
 
