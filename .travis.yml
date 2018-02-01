@@ -5,9 +5,12 @@ language: generic
 services:
   - docker
 
+addons:
+  hosts:
+    - alfred.bartfeenstra.com
+
 before_script:
   - ./bin/build
-  - echo "127.0.0.1 alfred.bartfeenstra.com" >> /etc/hosts
 
 script:
   - ./bin/test
