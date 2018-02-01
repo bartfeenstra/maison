@@ -1,5 +1,5 @@
 FROM debian:9.3
-ARG ola_version
+
 ENV TERM linux
 ENV ENV DEBIAN_FRONTEND noninteractive
 

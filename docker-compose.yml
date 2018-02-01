@@ -8,18 +8,60 @@ services:
      - "9090"
     ports:
      - "9010:9010"
-     - "8083:9090"
   alfred:
     image: alfred:alfred
     build: ./alfred
     expose:
      - "5000"
-    ports:
-     - "8081:5000"
+    depends_on:
+      - ola
+    networks:
+      maison:
+        aliases:
+          - alfred
   alfred-client:
     image: alfred:alfred-client
     build: ./alfred-client
     expose:
      - "80"
+    networks:
+      maison:
+        aliases:
+          - alfred-client
+    volumes:
+      - type: volume
+        source: alfred-client-www
+        target: /opt/alfred-client/www
+        read_only: true
+  nginx:
+    image: maison:nginx
+    build: ./nginx
+    expose:
+     - "80"
+     - "443"
     ports:
-     - "8082:80"
+     - "80:80"
+     - "443:443"
+    depends_on:
+      - alfred
+      - alfred-client
+#      - certbot
+    networks:
+      - maison
+    volumes:
+      - type: volume
+        source: alfred-client-www
+        target: /opt/alfred-client
+#  certbot:
+#    image: maison:certbot
+#    build: ./certbot
+#    networks:
+#      maison:
+#        aliases:
+#          - certbot
+networks:
+  maison:
+
+volumes:
+  alfred-client-www:
+
