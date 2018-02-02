@@ -2,4 +2,6 @@
 
 cd `dirname "$0"`/..
 
+sudo cp ./alfred/ftdi.rules /etc/udev/rules.d/
+
 docker-compose build

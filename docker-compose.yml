@@ -13,6 +13,9 @@ services:
       maison:
         aliases:
           - alfred
+    # The FTDI USB device we need can be (un)mounted at any time, and as any /dev/ttyUSB* device. Because we trust this
+    # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
+    privileged: true
   alfred-client:
     image: alfred:alfred-client
     build: ./alfred-client
