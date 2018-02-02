@@ -6,6 +6,7 @@ ENV TERM linux
 ENV ENV DEBIAN_FRONTEND noninteractive
 
 COPY ./entrypoint.sh /opt/maison/entrypoint.sh
+COPY ./ftdi.rules /etc/udev/rules.d/ftdi.rules
 
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y apt-utils \
@@ -26,8 +27,7 @@ USER olad
 RUN mkdir /usr/lib/olad/.ola/
 RUN for pt in "artnet" "dummy" "e131" "espnet" "gpio" "karate" "kinet" "milinst" "opendmx" "openpixelcontrol" "osc" "pathport" "renard" "sandnet" "shownet" "spi" "stageprofi" "usbserial" "uartdmx" "usbdmx"; do echo "enabled = false" > /usr/lib/olad/.ola/ola-$pt.conf; done
 # Enable FTDI devices.
-# @todo Enable this again once the USB device exists.
-#RUN echo "enabled = true" > /usr/lib/olad/.ola/ola-ftdidmx.conf
+RUN echo "enabled = true" > /usr/lib/olad/.ola/ola-ftdidmx.conf
 
 USER root
 RUN git clone https://github.com/bartfeenstra/alfred.git /opt/alfred
