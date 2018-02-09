@@ -16,6 +16,31 @@ services:
     # The FTDI USB device we need can be (un)mounted at any time, and as any /dev/ttyUSB* device. Because we trust this
     # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
     privileged: true
+  deepspeech:
+    image: alfred:deepspeech
+    build: ./deepspeech
+    expose:
+     - "80"
+#    ports:
+#     - "8087:80"
+    networks:
+      maison:
+        aliases:
+          - deepspeech
+  mycroft:
+    image: alfred:mycroft
+    build: ./mycroft
+    environment:
+      - PULSE_SERVER=unix:/run/user/1000/pulse/native
+    networks:
+      maison:
+        aliases:
+          - mycroft
+    volumes:
+      # @todo Is there a cross-platform environment variable with the current user ID?
+      - /run/user/1000/pulse:/run/user/1000/pulse
+    # @todo Do we need this for audio access?
+    privileged: true
   alfred-client:
     image: alfred:alfred-client
     build: ./alfred-client
