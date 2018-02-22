@@ -32,7 +32,8 @@ RUN echo 'en_US.UTF-8 UTF-8' > /etc/locale.gen
 RUN apt-get purge locales && apt-get install -y locales && dpkg-reconfigure locales
 
 # Install Mycroft.
-RUN git clone --branch master https://github.com/bartfeenstra/mycroft-core.git /opt/mycroft
+# @todo The DeepSpeech code is, at the time of writing, available on dev, but not yet on master.
+RUN git clone --branch dev https://github.com/bartfeenstra/mycroft-core.git /opt/mycroft
 RUN chown mycroft:mycroft -R /opt/mycroft
 USER mycroft
 WORKDIR /opt/mycroft
@@ -43,13 +44,13 @@ RUN ./dev_setup.sh
 
 # Add local Mycroft configuration.
 # @todo Move this up once we're done with it, as it will change less often than Mycroft itself.
-COPY mycroft.conf /etc/mycroft/mycroft.conf
 USER root
+COPY mycroft.conf /etc/mycroft/mycroft.conf
 RUN chown mycroft:mycroft -R /etc/mycroft
 USER mycroft
 
 # Start Mycroft.
-#RUN ./start-mycroft.sh all
+RUN ./start-mycroft.sh all
 
 CMD tail -f /dev/null
 #ENTRYPOINT ["tail", "-f", "/opt/mycroft/scripts/logs/mycroft-skills.log"]
