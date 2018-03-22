@@ -7,7 +7,7 @@ services:
 
 addons:
   hosts:
-    - alfred.bartfeenstra.com
+    - maison.bartfeenstra.com
 
 before_script:
   - ./bin/build
