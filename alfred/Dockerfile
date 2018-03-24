@@ -10,6 +10,8 @@ COPY ./ftdi.rules /etc/udev/rules.d/ftdi.rules
 
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y apt-utils \
+        # OLA devices can be hot-swappable (USB), so we need `sudo ola_patch` to register them with OLA run-time.
+        sudo \
         ola \
         git \
     # Clean caches for a smaller build.
