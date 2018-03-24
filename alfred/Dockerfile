@@ -25,7 +25,7 @@ RUN mkdir /usr/lib/olad
 RUN chown olad:olad -R /usr/lib/olad
 RUN service olad start && sleep 1 \
     # Disable all OLA plugins.
-    && bash -c 'for pid in {0..16}; do ola_plugin_state -p $pid -s disabled; done' \
+    && bash -c 'for pid in {1..16}; do ola_plugin_state -p $pid -s disabled; done' \
     # Enable FTDI devices.
     && ola_plugin_state -p 13 -s enabled
 
