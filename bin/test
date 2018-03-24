@@ -6,7 +6,6 @@ cd `dirname "$0"`/..
 exit_code=0
 trap '(( exit_code |= $? ))' ERR
 
-./bin/build
 ./bin/run
 sleep 3
 
