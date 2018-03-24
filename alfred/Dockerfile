@@ -10,7 +10,6 @@ COPY ./ftdi.rules /etc/udev/rules.d/ftdi.rules
 
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y apt-utils \
-        sudo \
         ola \
         git \
     # Clean caches for a smaller build.
@@ -19,17 +18,15 @@ RUN apt-get update && apt-get upgrade -y \
     && rm -rf /opt/ola.tar.gz \
     && rm -rf /tmp/* /var/tmp/*
 
-# The ola package creates an "olad" user and sets its home, but fails to create it.
+# The ola package creates an "olad" user and sets its home, but fails to create the directory.
 RUN mkdir /usr/lib/olad
 RUN chown olad:olad -R /usr/lib/olad
-USER olad
-# Disable unused OLA plugins.
-RUN mkdir /usr/lib/olad/.ola/
-RUN for pt in "artnet" "dummy" "e131" "espnet" "gpio" "karate" "kinet" "milinst" "opendmx" "openpixelcontrol" "osc" "pathport" "renard" "sandnet" "shownet" "spi" "stageprofi" "usbserial" "uartdmx" "usbdmx"; do echo "enabled = false" > /usr/lib/olad/.ola/ola-$pt.conf; done
-# Enable FTDI devices.
-RUN echo "enabled = true" > /usr/lib/olad/.ola/ola-ftdidmx.conf
+RUN service olad start && sleep 1 \
+    # Disable all OLA plugins.
+    && bash -c 'for pid in {0..16}; do ola_plugin_state -p $pid -s disabled; done' \
+    # Enable FTDI devices.
+    && ola_plugin_state -p 13 -s enabled
 
-USER root
 RUN git clone https://github.com/bartfeenstra/alfred.git /opt/alfred
 WORKDIR /opt/alfred
 ARG alfred_version
