@@ -1,2 +1,4 @@
 /db/data
-/openhab/userdata
+/openhab/userdata/*
+!/openhab/userdata/config
+!/openhab/userdata/etc
