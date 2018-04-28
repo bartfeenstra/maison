@@ -12,6 +12,8 @@ services:
       maison:
         aliases:
           - db
+    environment:
+      MYSQL_ROOT_PASSWORD: 'bartman'
   openhab:
     image: 'openhab/openhab:2.2.0-amd64-debian'
     restart: on-failure
