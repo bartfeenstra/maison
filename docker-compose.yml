@@ -1,10 +1,38 @@
 version: '3.4'
 services:
-  alfred:
-    image: alfred:alfred
-    build: ./alfred
+  db:
+    image: 'mariadb:10.2'
+    restart: on-failure
+    ports:
+     - '3306:3306'
+    volumes:
+      - './db/data:/var/lib/mysql'
+      - './db/conf:/etc/mysql/conf.d'
+    networks:
+      maison:
+        aliases:
+          - db
+  openhab:
+    image: 'openhab/openhab:2.2.0-amd64-debian'
+    restart: on-failure
+    network_mode: host
+    tty: true
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+      - './openhab/addons:/openhab/addons'
+      - './openhab/conf:/openhab/conf'
+      - './openhab/userdata:/openhab/userdata'
+    environment:
+      OPENHAB_HTTP_PORT: '8080'
+      OPENHAB_HTTPS_PORT: '8443'
+    depends_on:
+      - db
+  ola:
+    image: ola:ola
+    build: ./ola
+    restart: on-failure
     expose:
-     - "5000"
      - "9010"
      - "9090"
     ports:
@@ -12,24 +40,10 @@ services:
     networks:
       maison:
         aliases:
-          - alfred
+          - ola
     # The FTDI USB device we need can be (un)mounted at any time, and as any /dev/ttyUSB* device. Because we trust this
     # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
     privileged: true
-  alfred-client:
-    image: alfred:alfred-client
-    build: ./alfred-client
-    expose:
-     - "80"
-    networks:
-      maison:
-        aliases:
-          - alfred-client
-    volumes:
-      - type: volume
-        source: alfred-client-www
-        target: /opt/alfred-client/www
-        read_only: true
   nginx:
     image: maison:nginx
     build: ./nginx
@@ -39,16 +53,10 @@ services:
     ports:
      - "80:80"
      - "443:443"
-    depends_on:
-      - alfred
-      - alfred-client
+#    depends_on:
 #      - certbot
     networks:
       - maison
-    volumes:
-      - type: volume
-        source: alfred-client-www
-        target: /opt/alfred-client
 #  certbot:
 #    image: maison:certbot
 #    build: ./certbot
@@ -58,7 +66,3 @@ services:
 #          - certbot
 networks:
   maison:
-
-volumes:
-  alfred-client-www:
-

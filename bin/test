@@ -6,13 +6,8 @@ cd `dirname "$0"`/..
 exit_code=0
 trap '(( exit_code |= $? ))' ERR
 
-./bin/run
+./bin/start
 sleep 3
-
-# Connect to Alfred.
-curl -fs http://maison.bartfeenstra.com/api/about/json/schema > /dev/null
-# Connect to the Alfred client.
-curl -fs http://maison.bartfeenstra.com > /dev/null
 
 ./bin/stop
 

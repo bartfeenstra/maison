@@ -1,0 +1,8 @@
+sitemap maison label="Maison"
+{
+	Frame label="TV light"
+	{
+		Colorpicker item=Par_TV_Color
+		Slider item=Par_TV_Luminosity
+	}
+}

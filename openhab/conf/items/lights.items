@@ -1,0 +1,3 @@
+Color Par_TV_Color "TV light color" <colorpicker>
+Dimmer Par_TV_Luminosity "TV light luminosity" <slider>
+
