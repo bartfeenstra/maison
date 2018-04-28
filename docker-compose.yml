@@ -15,7 +15,6 @@ services:
   openhab:
     image: 'openhab/openhab:2.2.0-amd64-debian'
     restart: on-failure
-    network_mode: host
     tty: true
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
@@ -23,6 +22,10 @@ services:
       - './openhab/addons:/openhab/addons'
       - './openhab/conf:/openhab/conf'
       - './openhab/userdata:/openhab/userdata'
+    ports:
+     - "8080:8080"
+    networks:
+      - maison
     environment:
       OPENHAB_HTTP_PORT: '8080'
       OPENHAB_HTTPS_PORT: '8443'
