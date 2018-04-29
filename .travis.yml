@@ -5,7 +5,7 @@ language: generic
 services:
   - docker
 
-before_script:
+before_install:
   - sudo /etc/init.d/mysql stop
 
 before_script:
