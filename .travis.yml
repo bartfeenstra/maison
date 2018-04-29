@@ -6,6 +6,9 @@ services:
   - docker
 
 before_script:
+  - sudo /etc/init.d/mysql stop
+
+before_script:
   - ./bin/build
 
 script:
