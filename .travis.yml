@@ -6,6 +6,9 @@ services:
   - docker
 
 addons:
+  apt:
+    packages:
+    - apache2-utils
   hosts:
     - maison.bartfeenstra.com
 

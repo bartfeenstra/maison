@@ -6,16 +6,22 @@ cd `dirname "$0"`/..
 exit_code=0
 trap '(( exit_code |= $? ))' ERR
 
+username=maisontest
+password=bienvenue
+htpasswd -b ./nginx/htpasswd $username $password
+
 ./bin/start
 # Especially openHAB takes a while to start.
 sleep 9
 
 # Connect to OLA.
-curl -fs http://ola.maison.bartfeenstra.com > /dev/null
+curl -fs --user $username:$password http://ola.maison.bartfeenstra.com > /dev/null
 # Connect to openHAB.
-curl -fs http://hab.maison.bartfeenstra.com > /dev/null
+curl -fs --user $username:$password http://hab.maison.bartfeenstra.com > /dev/null
 
 ./bin/stop
+
+htpasswd -D ./nginx/htpasswd $username
 
 # Stop aggregating test exit codes.
 trap - ERR

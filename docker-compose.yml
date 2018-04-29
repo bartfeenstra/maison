@@ -52,6 +52,8 @@ services:
     image: maison:nginx
     build: ./nginx
     restart: on-failure
+    volumes:
+      - './nginx/htpasswd:/etc/nginx/htpasswd'
     expose:
      - '80'
      - '443'

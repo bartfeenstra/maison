@@ -3,6 +3,7 @@
 cd `dirname "$0"`/..
 
 mkdir -p ./db/data
+touch ./nginx/htpasswd
 sudo cp ./ola/ftdi.rules /etc/udev/rules.d/
 
 docker-compose -p maison build $@
