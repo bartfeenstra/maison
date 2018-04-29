@@ -7,7 +7,13 @@ exit_code=0
 trap '(( exit_code |= $? ))' ERR
 
 ./bin/start
-sleep 3
+# Especially OpenHab takes a while to start.
+sleep 9
+
+# Connect to OLA.
+curl -fs http://maison.bartfeenstra.com/ola > /dev/null
+# Connect to OpenHab.
+curl -fs http://maison.bartfeenstra.com/home > /dev/null
 
 ./bin/stop
 
