@@ -5,6 +5,10 @@ language: generic
 services:
   - docker
 
+addons:
+  hosts:
+    - maison.bartfeenstra.com
+
 before_install:
   - sudo /etc/init.d/mysql stop
 
