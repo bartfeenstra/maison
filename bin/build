@@ -6,4 +6,4 @@ mkdir -p ./db/data
 sudo cp ./ola/ftdi.rules /etc/udev/rules.d/
 
 ./bin/stop
-docker-compose build
+docker-compose -p maison build $@
