@@ -60,16 +60,7 @@ services:
     ports:
      - '80:80'
      - '443:443'
-#    depends_on:
-#      - certbot
     networks:
       - maison
-#  certbot:
-#    image: maison:certbot
-#    build: ./certbot
-#    networks:
-#      maison:
-#        aliases:
-#          - certbot
 networks:
   maison:
