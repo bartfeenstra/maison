@@ -1,5 +1,4 @@
 /db/data
 /nginx/htpasswd
 /openhab/userdata/*
-!/openhab/userdata/config
-!/openhab/userdata/etc
+
