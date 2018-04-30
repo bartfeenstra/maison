@@ -15,9 +15,9 @@ htpasswd -b ./nginx/htpasswd $username $password
 sleep 20
 
 # Connect to OLA.
-curl -fs --user $username:$password http://ola.maison.bartfeenstra.com > /dev/null
+curl --verbose --user $username:$password http://ola.maison.bartfeenstra.com > /dev/null
 # Connect to openHAB.
-curl -fs --user $username:$password http://hab.maison.bartfeenstra.com > /dev/null
+curl --verbose --user $username:$password http://hab.maison.bartfeenstra.com > /dev/null
 
 ./bin/stop
 
