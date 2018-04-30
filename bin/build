@@ -2,8 +2,8 @@
 
 cd `dirname "$0"`/..
 
-sudo cp ./alfred/ftdi.rules /etc/udev/rules.d/
+mkdir -p ./db/data
+touch ./nginx/htpasswd
+sudo cp ./ola/ftdi.rules /etc/udev/rules.d/
 
-./bin/stop
-docker volume rm maisonalfred_alfred-client-www
-docker-compose build --no-cache
+docker-compose -p maison build $@
