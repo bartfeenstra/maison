@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-cd `dirname "$0"`/..
-
-./bin/build
-docker-compose up -d

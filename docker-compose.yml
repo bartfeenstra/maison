@@ -1,21 +1,19 @@
 version: '3.4'
 services:
-  alfred:
-    image: alfred:alfred
-    build: ./alfred
-    expose:
-     - "5000"
-     - "9010"
-     - "9090"
+  db:
+    image: 'mariadb:10.2'
+    restart: on-failure
     ports:
-     - "9090:9090"
+     - '3306:3306'
+    volumes:
+      - './db/data:/var/lib/mysql'
+      - './db/conf:/etc/mysql/conf.d'
     networks:
       maison:
         aliases:
-          - alfred
-    # The FTDI USB device we need can be (un)mounted at any time, and as any /dev/ttyUSB* device. Because we trust this
-    # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
-    privileged: true
+          - db
+    environment:
+      MYSQL_ROOT_PASSWORD: 'bartman'
   deepspeech:
     image: alfred:deepspeech
     build: ./deepspeech
@@ -41,39 +39,56 @@ services:
       - /run/user/1000/pulse:/run/user/1000/pulse
     # @todo Do we need this for audio access?
     privileged: true
-  alfred-client:
-    image: alfred:alfred-client
-    build: ./alfred-client
+  openhab:
+    image: 'openhab/openhab:2.2.0-amd64-debian'
+    restart: on-failure
+    tty: true
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+      - './openhab/addons:/openhab/addons'
+      - './openhab/conf:/openhab/conf'
+      - './openhab/userdata:/openhab/userdata'
     expose:
-     - "80"
+     - '8081'
     networks:
       maison:
         aliases:
-          - alfred-client
-    volumes:
-      - type: volume
-        source: alfred-client-www
-        target: /opt/alfred-client/www
-        read_only: true
+          - openhab
+    environment:
+      OPENHAB_HTTP_PORT: '8081'
+    depends_on:
+      - db
+  ola:
+    image: ola:ola
+    build: ./ola
+    restart: on-failure
+    expose:
+     - '9010'
+     - '9090'
+    networks:
+      maison:
+        aliases:
+          - ola
+    # The FTDI USB device we need can be (un)mounted at any time, and as any /dev/ttyUSB* device. Because we trust this
+    # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
+    privileged: true
   nginx:
     image: maison:nginx
     build: ./nginx
+    restart: on-failure
+    volumes:
+      - './nginx/htpasswd:/etc/nginx/htpasswd'
     expose:
-     - "80"
-     - "443"
+     - '80'
+     - '443'
     ports:
-     - "80:80"
-     - "443:443"
-    depends_on:
-      - alfred
-      - alfred-client
+     - '80:80'
+     - '443:443'
+#    depends_on:
 #      - certbot
     networks:
       - maison
-    volumes:
-      - type: volume
-        source: alfred-client-www
-        target: /opt/alfred-client
 #  certbot:
 #    image: maison:certbot
 #    build: ./certbot
@@ -83,7 +98,3 @@ services:
 #          - certbot
 networks:
   maison:
-
-volumes:
-  alfred-client-www:
-
