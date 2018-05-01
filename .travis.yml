@@ -10,7 +10,10 @@ addons:
     packages:
     - apache2-utils
   hosts:
-    - maison.bartfeenstra.com
+    - ci.maison.bartfeenstra.com
+    - git.maison.bartfeenstra.com
+    - ola.maison.bartfeenstra.com
+    - hab.maison.bartfeenstra.com
 
 before_install:
   - sudo /etc/init.d/mysql stop
