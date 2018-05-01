@@ -1,0 +1,18 @@
+#!/use/bin/env bash
+
+# Exit on errors.
+trap 'exit' ERR
+
+domains=${MAISON_DOMAINS:-''}
+for domain in $domains
+do
+    if [ ! -d "/etc/letsencrypt/live/$domain" ]; then
+    # @todo Make sure to put on a volume, so they don't get lost whenever the container reboots.
+    # @todo This is necessary to prevent hitting Let's Encrypt's rate limits (https://letsencrypt.org/docs/rate-limits/)
+        certbot certonly --standalone -n --agree-tos --email bart@mynameisbart.com -d $domain
+    fi
+done
+
+certbot renew
+
+nginx -g 'daemon off;'
