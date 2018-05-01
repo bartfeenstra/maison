@@ -1,5 +1,8 @@
 /db/data
-/vcs/data
+/vcs/*
+!/vcs/gitea
+/vcs/gitea/*
+!/vcs/gitea/conf
 /nginx/htpasswd
 /openhab/userdata/*
 

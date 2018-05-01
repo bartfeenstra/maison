@@ -7,7 +7,6 @@ exit_code=0
 trap '(( exit_code |= $? ))' ERR
 
 mkdir -p ./db/data
-mkdir -p ./vcs/data
 touch ./nginx/htpasswd
 sudo cp ./ola/ftdi.rules /etc/udev/rules.d/
 

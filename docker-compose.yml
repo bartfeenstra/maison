@@ -55,7 +55,7 @@ services:
     image: 'gitea/gitea:1.4'
     restart: on-failure
     volumes:
-      - './vcs/data:/data'
+      - './vcs:/data'
     ports:
       - "3000:3000"
       - "222:222"
@@ -64,7 +64,6 @@ services:
         aliases:
           - vcs
     depends_on:
-      - ci
       - db
   ci:
     image: 'drone/drone:0.8'
@@ -90,6 +89,7 @@ services:
       GIN_MODE: release
     depends_on:
       - db
+      - vcs
   ci-agent:
     image: 'drone/agent:0.8'
     restart: on-failure
