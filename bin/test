@@ -14,6 +14,8 @@ htpasswd -b ./nginx/htpasswd $username $password
 # Especially openHAB takes a while to start.
 sleep 20
 
+# Connect to the Unifi controller.
+curl --verbose --user $username:$password http://network.maison.bartfeenstra.com > /dev/null
 # Connect to OLA.
 curl --verbose --user $username:$password http://ola.maison.bartfeenstra.com > /dev/null
 # Connect to openHAB.

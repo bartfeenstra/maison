@@ -111,6 +111,14 @@ services:
       DRONE_SECRET: 'SuperSecret'
     depends_on:
       - ci
+  network:
+    image: 'jacobalberty/unifi:5.7'
+    restart: on-failure
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+      - './network/data:/unifi/data'
+    network_mode: host
   nginx:
     image: maison:nginx
     build: ./nginx
