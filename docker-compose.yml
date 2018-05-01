@@ -6,6 +6,8 @@ services:
     ports:
      - '3306:3306'
     volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
       - './db/data:/var/lib/mysql'
       - './db/conf:/etc/mysql/conf.d'
     networks:
@@ -34,6 +36,7 @@ services:
       OPENHAB_HTTP_PORT: '8081'
     depends_on:
       - db
+      - ola
   ola:
     image: ola:ola
     build: ./ola
@@ -49,7 +52,7 @@ services:
     # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
     privileged: true
   vcs:
-    image: gitea/gitea:1.4
+    image: 'gitea/gitea:1.4'
     restart: on-failure
     volumes:
       - './vcs/data:/data'
@@ -61,12 +64,56 @@ services:
         aliases:
           - vcs
     depends_on:
+      - ci
       - db
+  ci:
+    image: 'drone/drone:0.8'
+    restart: on-failure
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    ports:
+      - '9000'
+    networks:
+      maison:
+        aliases:
+          - ci
+    environment:
+      DRONE_OPEN: 'true'
+      DRONE_HOST: 'http://ci.maison.bartfeenstra.com'
+      DRONE_SECRET: 'SuperSecret'
+      DRONE_ADMIN: 'bart'
+      DRONE_GITEA: 'true'
+      DRONE_GITEA_URL: 'http://git.maison.bartfeenstra.com'
+      DRONE_DATABASE_DRIVER: mysql
+      DRONE_DATABASE_DATASOURCE: 'drone:bartman@tcp(db:3306)/drone?parseTime=true'
+      GIN_MODE: release
+    depends_on:
+      - db
+  ci-agent:
+    image: 'drone/agent:0.8'
+    restart: on-failure
+    command: agent
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      maison:
+        aliases:
+          - ci
+    environment:
+      DRONE_SERVER: ci:9000
+      DRONE_SECRET: 'SuperSecret'
+    depends_on:
+      - ci
   nginx:
     image: maison:nginx
     build: ./nginx
     restart: on-failure
     volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
       - './nginx/htpasswd:/etc/nginx/htpasswd'
     expose:
      - '80'

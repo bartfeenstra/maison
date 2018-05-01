@@ -18,6 +18,10 @@ sleep 20
 curl --verbose --user $username:$password http://ola.maison.bartfeenstra.com > /dev/null
 # Connect to openHAB.
 curl --verbose --user $username:$password http://hab.maison.bartfeenstra.com > /dev/null
+# Connect to Gitea.
+curl --verbose --user $username:$password http://git.maison.bartfeenstra.com > /dev/null
+# Connect to Drone.
+curl --verbose --user $username:$password http://ci.maison.bartfeenstra.com > /dev/null
 
 ./bin/stop
 
