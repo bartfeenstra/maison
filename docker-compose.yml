@@ -117,8 +117,10 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './network/data:/unifi/data'
+      - './network/data:/unifi'
     network_mode: host
+    environment:
+      RUNAS_UID0: 'false'
   nginx:
     image: maison:nginx
     build: ./nginx
