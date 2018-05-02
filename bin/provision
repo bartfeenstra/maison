@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+cd `dirname "$0"`/..
+
+# Exit on errors.
+trap 'exit $?' ERR
+
+if [ ! -f ./.env ]; then
+    ./bin/build
+    exit 1
+fi
+. .env
+
+### openHAB
+docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${MAISON_HAB_DB_NAME};"
+docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MAISON_HAB_DB_USERNAME}'@'%' IDENTIFIED BY '${MAISON_HAB_DB_PASSWORD}';"
+docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${MAISON_HAB_DB_NAME}.* TO '${MAISON_HAB_DB_USERNAME}'@'%';"
+docker exec maison_db_1 mysql -u ${MAISON_HAB_DB_USERNAME} -p${MAISON_HAB_DB_PASSWORD} -e ""
+
+### VCS
+docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${MAISON_VCS_DB_NAME};"
+docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MAISON_VCS_DB_USERNAME}'@'%' IDENTIFIED BY '${MAISON_VCS_DB_PASSWORD}';"
+docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${MAISON_VCS_DB_NAME}.* TO '${MAISON_VCS_DB_USERNAME}'@'%';"
+docker exec maison_db_1 mysql -u ${MAISON_VCS_DB_USERNAME} -p${MAISON_VCS_DB_PASSWORD} -e ""
+
+### CI
+docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${MAISON_CI_DB_NAME};"
+docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MAISON_CI_DB_USERNAME}'@'%' IDENTIFIED BY '${MAISON_CI_DB_PASSWORD}';"
+docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${MAISON_CI_DB_NAME}.* TO '${MAISON_CI_DB_USERNAME}'@'%';"
+docker exec maison_db_1 mysql -u ${MAISON_CI_DB_USERNAME} -p${MAISON_CI_DB_PASSWORD} -e ""
+
+### OLA
+docker exec maison_ola_1 ola_patch -i -u 1 -d 1 -p 1
+docker exec maison_ola_1 ola_patch -u 1 -d 2 -p 1
+
