@@ -1,0 +1,11 @@
+#!/use/bin/env bash
+
+# Exit on errors.
+trap 'exit' ERR
+
+hostip=$(ip route show | awk '/default/ {print $3}')
+# The Unifi controller runs on the host network. We tunnel the port dynamically so nginx can proxy to localhost.
+nc -l -p 8080 -c "nc $hostip 8080" &
+
+nginx -g 'daemon off;'
+
