@@ -12,6 +12,7 @@ addons:
   hosts:
     - ci.maison.bartfeenstra.com
     - git.maison.bartfeenstra.com
+    - network.maison.bartfeenstra.com
     - ola.maison.bartfeenstra.com
     - hab.maison.bartfeenstra.com
 
