@@ -1,9 +1,24 @@
+### Docker Compose
+/.env
+
+### DB
 /db/data
+
+### Unifi.
 /network/data
-/vcs/*
-!/vcs/gitea
-/vcs/gitea/*
-!/vcs/gitea/conf
+
+### Web server
 /nginx/htpasswd
+
+### openHAB
+# We commit the *.envtpl file instead.
+/openhab/conf/services/jdbc.cfg
 /openhab/userdata/*
 
+### VCS
+/vcs/data*
+!/vcs/data/gitea
+/vcs/data/gitea/*
+!/vcs/data/gitea/conf
+# We commit the *.envtpl file instead.
+/vcs/data/gitea/conf/app.ini

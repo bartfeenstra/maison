@@ -1,7 +1,7 @@
 #!/use/bin/env bash
 
 # Exit on errors.
-trap 'exit' ERR
+trap 'exit $?' ERR
 
 hostip=$(ip route show | awk '/default/ {print $3}')
 # The Unifi controller runs on the host network. We tunnel the port dynamically so nginx can proxy to localhost.
