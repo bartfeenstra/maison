@@ -2,5 +2,7 @@
 
 cd `dirname "$0"`/..
 
-./bin/stop
-./bin/start
+# Exit on errors.
+trap 'exit $?' ERR
+
+docker-compose -p maison restart "$@"

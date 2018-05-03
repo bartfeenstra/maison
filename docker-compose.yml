@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   db:
-    image: 'mariadb:10.2'
+    image: 'mariadb:10.3'
     restart: on-failure
     ports:
      - '3306:3306'
@@ -15,9 +15,10 @@ services:
         aliases:
           - db
     environment:
-      MYSQL_ROOT_PASSWORD: 'bartman'
+      MYSQL_ROOT_PASSWORD: '${MAISON_DB_ROOT_PASSWORD}'
   openhab:
-    image: 'openhab/openhab:2.2.0-amd64-debian'
+    image: maison:openhab
+    build: ./openhab
     restart: on-failure
     tty: true
     volumes:
@@ -26,19 +27,20 @@ services:
       - './openhab/addons:/openhab/addons'
       - './openhab/conf:/openhab/conf'
       - './openhab/userdata:/openhab/userdata'
-    expose:
-     - '8081'
     networks:
       maison:
         aliases:
           - openhab
     environment:
       OPENHAB_HTTP_PORT: '8081'
+      MAISON_HAB_DB_NAME: '${MAISON_HAB_DB_NAME}'
+      MAISON_HAB_DB_USERNAME: '${MAISON_HAB_DB_USERNAME}'
+      MAISON_HAB_DB_PASSWORD: '${MAISON_HAB_DB_PASSWORD}'
     depends_on:
       - db
       - ola
   ola:
-    image: ola:ola
+    image: maison:ola
     build: ./ola
     restart: on-failure
     expose:
@@ -52,12 +54,13 @@ services:
     # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
     privileged: true
   vcs:
-    image: 'gitea/gitea:1.4'
+    image: maison:vcs
+    build: ./vcs
     restart: on-failure
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './vcs:/data'
+      - './vcs/data:/data'
     ports:
       - "3000:3000"
       - "222:222"
@@ -65,6 +68,10 @@ services:
       maison:
         aliases:
           - vcs
+    environment:
+      MAISON_VCS_DB_NAME: '${MAISON_VCS_DB_NAME}'
+      MAISON_VCS_DB_USERNAME: '${MAISON_VCS_DB_USERNAME}'
+      MAISON_VCS_DB_PASSWORD: '${MAISON_VCS_DB_PASSWORD}'
     depends_on:
       - db
   ci:
@@ -82,14 +89,14 @@ services:
     environment:
       DRONE_OPEN: 'true'
       DRONE_HOST: 'http://ci.maison.bartfeenstra.com'
-      DRONE_SECRET: 'SuperSecret'
+      DRONE_SECRET: '${MAISON_CI_DRONE_SECRET}'
       DRONE_ADMIN: 'bart'
       DRONE_GITEA: 'true'
       DRONE_GITEA_URL: 'http://git.maison.bartfeenstra.com'
-      DRONE_GITEA_GIT_USERNAME: 'drone'
-      DRONE_GITEA_GIT_PASSWORD: 'bartman'
+      DRONE_GITEA_GIT_USERNAME: '${MAISON_CI_GIT_USERNAME}'
+      DRONE_GITEA_GIT_PASSWORD: '${MAISON_CI_GIT_PASSWORD}'
       DRONE_DATABASE_DRIVER: mysql
-      DRONE_DATABASE_DATASOURCE: 'drone:bartman@tcp(db:3306)/drone?parseTime=true'
+      DRONE_DATABASE_DATASOURCE: '${MAISON_CI_DB_USERNAME}:${MAISON_CI_DB_PASSWORD}@tcp(db:3306)/${MAISON_CI_DB_NAME}?parseTime=true'
       GIN_MODE: release
     depends_on:
       - db
@@ -108,7 +115,7 @@ services:
           - ci
     environment:
       DRONE_SERVER: ci:9000
-      DRONE_SECRET: 'SuperSecret'
+      DRONE_SECRET: '${MAISON_CI_DRONE_SECRET}'
     depends_on:
       - ci
   network:

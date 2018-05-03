@@ -21,13 +21,13 @@
 # url=jdbc:mysql://192.168.0.1:3306/testMysql
 # url=jdbc:postgresql://192.168.0.1:5432/testPostgresql
 # url=jdbc:sqlite:./testSqlite.db
-url=jdbc:mysql://db/openhab
+url=jdbc:mysql://db/${MAISON_HAB_DB_NAME}
 
 # required database user
-user=openhab
+user=${MAISON_HAB_DB_USERNAME}
 
 # required database password
-password=bartman
+password=${MAISON_HAB_DB_PASSWORD}
 
 # E R R O R   H A N D L I N G
 # optional when Service is deactivated (optional, default: 0 -> ignore) 
@@ -79,3 +79,4 @@ password=bartman
 # T I M E K E E P I N G
 # (optional, default: false) 
 #enableLogTime=true
+

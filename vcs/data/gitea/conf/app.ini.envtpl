@@ -25,9 +25,9 @@ LANDING_PAGE     = explore
 [database]
 DB_TYPE  = mysql
 HOST     = db:3306
-NAME     = gitea
-USER     = gitea
-PASSWD   = bartman
+NAME     = ${MAISON_VCS_DB_NAME}
+USER     = ${MAISON_VCS_DB_USERNAME}
+PASSWD   = ${MAISON_VCS_DB_PASSWORD}
 SSL_MODE = disable
 
 [session]

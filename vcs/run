@@ -1,0 +1,11 @@
+#!/use/bin/env bash
+
+# Exit on errors.
+trap 'exit $?' ERR
+
+templates="/data/gitea/conf/app.ini"
+for template in $templates; do
+    envsubst < $template.envtpl > $template
+done
+
+/usr/bin/entrypoint "$@"
