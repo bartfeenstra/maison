@@ -1,11 +1,13 @@
 version: '3.4'
 services:
   db:
-    image: 'mariadb:10.2'
+    image: 'mariadb:10.3'
     restart: on-failure
     ports:
      - '3306:3306'
     volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
       - './db/data:/var/lib/mysql'
       - './db/conf:/etc/mysql/conf.d'
     networks:
@@ -13,7 +15,7 @@ services:
         aliases:
           - db
     environment:
-      MYSQL_ROOT_PASSWORD: 'bartman'
+      MYSQL_ROOT_PASSWORD: '${MAISON_DB_ROOT_PASSWORD}'
   deepspeech:
     image: alfred:deepspeech
     build: ./deepspeech
@@ -40,7 +42,8 @@ services:
     # @todo Do we need this for audio access?
     privileged: true
   openhab:
-    image: 'openhab/openhab:2.2.0-amd64-debian'
+    image: maison:openhab
+    build: ./openhab
     restart: on-failure
     tty: true
     volumes:
@@ -49,18 +52,20 @@ services:
       - './openhab/addons:/openhab/addons'
       - './openhab/conf:/openhab/conf'
       - './openhab/userdata:/openhab/userdata'
-    expose:
-     - '8081'
     networks:
       maison:
         aliases:
           - openhab
     environment:
       OPENHAB_HTTP_PORT: '8081'
+      MAISON_HAB_DB_NAME: '${MAISON_HAB_DB_NAME}'
+      MAISON_HAB_DB_USERNAME: '${MAISON_HAB_DB_USERNAME}'
+      MAISON_HAB_DB_PASSWORD: '${MAISON_HAB_DB_PASSWORD}'
     depends_on:
       - db
+      - ola
   ola:
-    image: ola:ola
+    image: maison:ola
     build: ./ola
     restart: on-failure
     expose:
@@ -73,11 +78,88 @@ services:
     # The FTDI USB device we need can be (un)mounted at any time, and as any /dev/ttyUSB* device. Because we trust this
     # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
     privileged: true
+  vcs:
+    image: maison:vcs
+    build: ./vcs
+    restart: on-failure
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+      - './vcs/data:/data'
+    ports:
+      - "3000:3000"
+      - "222:222"
+    networks:
+      maison:
+        aliases:
+          - vcs
+    environment:
+      MAISON_VCS_DB_NAME: '${MAISON_VCS_DB_NAME}'
+      MAISON_VCS_DB_USERNAME: '${MAISON_VCS_DB_USERNAME}'
+      MAISON_VCS_DB_PASSWORD: '${MAISON_VCS_DB_PASSWORD}'
+    depends_on:
+      - db
+  ci:
+    image: 'drone/drone:0.8'
+    restart: on-failure
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    ports:
+      - '9000'
+    networks:
+      maison:
+        aliases:
+          - ci
+    environment:
+      DRONE_OPEN: 'true'
+      DRONE_HOST: 'http://ci.maison.bartfeenstra.com'
+      DRONE_SECRET: '${MAISON_CI_DRONE_SECRET}'
+      DRONE_ADMIN: '${MAISON_VCS_ADMIN_USERNAME}'
+      DRONE_GITEA: 'true'
+      DRONE_GITEA_URL: 'http://git.maison.bartfeenstra.com'
+      DRONE_GITEA_GIT_USERNAME: '${MAISON_CI_GITEA_USERNAME}'
+      DRONE_GITEA_GIT_PASSWORD: '${MAISON_CI_GITEA_PASSWORD}'
+      DRONE_DATABASE_DRIVER: mysql
+      DRONE_DATABASE_DATASOURCE: '${MAISON_CI_DB_USERNAME}:${MAISON_CI_DB_PASSWORD}@tcp(db:3306)/${MAISON_CI_DB_NAME}?parseTime=true'
+      GIN_MODE: release
+    depends_on:
+      - db
+      - vcs
+  ci-agent:
+    image: 'drone/agent:0.8'
+    restart: on-failure
+    command: agent
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      maison:
+        aliases:
+          - ci
+    environment:
+      DRONE_SERVER: ci:9000
+      DRONE_SECRET: '${MAISON_CI_DRONE_SECRET}'
+    depends_on:
+      - ci
+  network:
+    image: 'jacobalberty/unifi:5.7'
+    restart: on-failure
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+      - './network/data:/unifi'
+    network_mode: host
+    environment:
+      RUNAS_UID0: 'false'
   nginx:
     image: maison:nginx
     build: ./nginx
     restart: on-failure
     volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
       - './nginx/htpasswd:/etc/nginx/htpasswd'
     expose:
      - '80'
@@ -85,16 +167,7 @@ services:
     ports:
      - '80:80'
      - '443:443'
-#    depends_on:
-#      - certbot
     networks:
       - maison
-#  certbot:
-#    image: maison:certbot
-#    build: ./certbot
-#    networks:
-#      maison:
-#        aliases:
-#          - certbot
 networks:
   maison:

@@ -2,8 +2,32 @@
 
 cd `dirname "$0"`/..
 
+# Exit on errors
+exit_code=0
+trap 'exit $?' ERR
+
+if [ ! -f ./.env ]; then
+    cp ./.env.dist ./.env
+    echo "Maison is being built for the first time. Update the configuration at `readlink -f ./.env` and run this command (./bin/build) again to finish the build."
+    exit 1
+fi
 mkdir -p ./db/data
+mkdir -p ./network/data
 touch ./nginx/htpasswd
 sudo cp ./ola/ftdi.rules /etc/udev/rules.d/
 
+sudo groupadd -f -g 9001 openhab
+id -u openhab &>/dev/null || sudo useradd -u 9001 -g openhab -r -s /sbin/nologin openhab && sudo usermod -a -G openhab `whoami`
+
 docker-compose -p maison build $@
+
+# Stop aggregating build step exit codes.
+trap - ERR
+
+if [ $exit_code -eq 0 ]
+then
+    echo "SUCCESS: ALL BUILD STEPS PASSED."
+else
+    echo "ERROR: SOME BUILD STEPS FAILED."
+fi
+exit $exit_code

@@ -10,16 +10,16 @@ username=maisontest
 password=bienvenue
 htpasswd -b ./nginx/htpasswd $username $password
 
-./bin/start
-# Especially openHAB takes a while to start.
-sleep 20
-
+# Connect to the Unifi controller.
+#curl --verbose -f --user $username:$password http://network.maison.bartfeenstra.com > /dev/null
 # Connect to OLA.
-curl --verbose --user $username:$password http://ola.maison.bartfeenstra.com > /dev/null
+curl --verbose -f --user $username:$password http://ola.maison.bartfeenstra.com > /dev/null
 # Connect to openHAB.
-curl --verbose --user $username:$password http://hab.maison.bartfeenstra.com > /dev/null
-
-./bin/stop
+curl --verbose -f --user $username:$password http://hab.maison.bartfeenstra.com > /dev/null
+# Connect to Gitea.
+curl --verbose -f http://git.maison.bartfeenstra.com > /dev/null
+# Connect to Drone.
+curl --verbose -f http://ci.maison.bartfeenstra.com > /dev/null
 
 htpasswd -D ./nginx/htpasswd $username
 
