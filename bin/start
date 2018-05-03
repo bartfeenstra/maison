@@ -11,4 +11,3 @@ if [ ! -f ./.env ]; then
 fi
 
 docker-compose -p maison up --scale ci-agent=2 -d
-./bin/provision

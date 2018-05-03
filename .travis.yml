@@ -22,6 +22,11 @@ before_install:
 before_script:
   - cp ./travis-ci/.env ./
   - ./bin/build
+  - ./bin/start
+  - sleep 9
+  - ./bin/provision
+  - ./bin/restart
+  - sleep 9
 
 script:
   - ./bin/test
