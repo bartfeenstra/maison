@@ -145,6 +145,6 @@ services:
     networks:
       - maison
     environment:
-      MAISON_DOMAINS: 'hab.maison.bartfeenstra.com network.maison.bartfeenstra.com ola.maison.bartfeenstra.com'
+      MAISON_DOMAINS: '${MAISON_DOMAINS}'
 networks:
   maison:
