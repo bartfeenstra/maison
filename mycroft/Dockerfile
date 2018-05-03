@@ -3,8 +3,6 @@ ENV TERM=linux DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y apt-utils
 RUN apt-get install -y swig libasound2-dev portaudio19-dev libfann-dev sudo
-# Clean caches for a smaller build.
-RUN apt-get autoremove && apt-get clean && rm -rf /opt/ola.tar.gz && rm -rf /tmp/* /var/tmp/*
 
 # Configure audio.
 COPY asound.conf /etc/asound.conf
@@ -33,7 +31,7 @@ RUN apt-get purge locales && apt-get install -y locales && dpkg-reconfigure loca
 
 # Install Mycroft.
 # @todo The DeepSpeech code is, at the time of writing, available on dev, but not yet on master.
-RUN git clone --branch dev https://github.com/bartfeenstra/mycroft-core.git /opt/mycroft
+RUN git clone --branch release/v18.2.5 --depth 1 https://github.com/MycroftAI/mycroft-core.git /opt/mycroft
 RUN chown mycroft:mycroft -R /opt/mycroft
 USER mycroft
 WORKDIR /opt/mycroft
