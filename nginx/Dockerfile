@@ -1,12 +1,13 @@
-FROM nginx:1.13-alpine
+FROM nginx:1.13
 
 COPY ./conf/* /etc/nginx/
-COPY ./run /etc/nginx/run
+COPY ./run /maison/run
 
-RUN apk add --no-cache bash certbot
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y certbot iproute2 netcat
 
-RUN chmod ug+rx /etc/nginx/run
+RUN chmod ug+rx /maison/run
 
-CMD ["bash", "/etc/nginx/run"]
+CMD ["bash", "/maison/run"]
 
 EXPOSE 80 443
