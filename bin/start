@@ -2,6 +2,12 @@
 
 cd `dirname "$0"`/..
 
+# Exit on errors.
+trap 'exit $?' ERR
+
+if [ ! -f ./.env ]; then
+    ./bin/build
+    exit 1
+fi
+
 docker-compose -p maison up --scale ci-agent=2 -d
-docker exec maison_ola_1 ola_patch -i -u 1 -d 1 -p 1
-docker exec maison_ola_1 ola_patch -u 1 -d 2 -p 1

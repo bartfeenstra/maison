@@ -20,7 +20,13 @@ before_install:
   - sudo /etc/init.d/mysql stop
 
 before_script:
+  - cp ./travis-ci/.env ./
   - ./bin/build
+  - ./bin/start
+  - sleep 20
+  - ./bin/provision
+  - ./bin/restart
+  - sleep 20
 
 script:
   - ./bin/test

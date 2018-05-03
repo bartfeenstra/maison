@@ -1,0 +1,11 @@
+#!/use/bin/env bash
+
+# Exit on errors.
+trap 'exit $?' ERR
+
+templates="/openhab/conf/services/jdbc.cfg"
+for template in $templates; do
+    envsubst < $template.envtpl > $template
+done
+
+/entrypoint.sh "$@"
