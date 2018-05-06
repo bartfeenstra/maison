@@ -2,4 +2,4 @@
 
 cd `dirname "$0"`/..
 
-docker-compose -p maison down
+docker-compose -p maison down "$@"
