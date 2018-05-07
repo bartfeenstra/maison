@@ -10,11 +10,11 @@ addons:
     packages:
     - apache2-utils
   hosts:
-    - ci.maison.bartfeenstra.com
-    - git.maison.bartfeenstra.com
-    - network.maison.bartfeenstra.com
-    - ola.maison.bartfeenstra.com
-    - hab.maison.bartfeenstra.com
+    - ci.maison
+    - git.maison
+    - network.maison
+    - ola.maison
+    - hab.maison
 
 before_install:
   - sudo /etc/init.d/mysql stop
