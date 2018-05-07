@@ -62,8 +62,8 @@ services:
       - '/etc/timezone:/etc/timezone:ro'
       - './vcs/data:/data'
     ports:
-      - "3000:3000"
-      - "222:222"
+      - '3000:3000'
+      - '222:222'
     networks:
       maison:
         aliases:
@@ -88,11 +88,11 @@ services:
           - ci
     environment:
       DRONE_OPEN: 'true'
-      DRONE_HOST: 'http://ci.maison.bartfeenstra.com'
+      DRONE_HOST: 'http://${MAISON_CI_DOMAIN}'
       DRONE_SECRET: '${MAISON_CI_DRONE_SECRET}'
       DRONE_ADMIN: '${MAISON_VCS_ADMIN_USERNAME}'
       DRONE_GITEA: 'true'
-      DRONE_GITEA_URL: 'http://git.maison.bartfeenstra.com'
+      DRONE_GITEA_URL: 'http://${MAISON_VCS_DOMAIN}'
       DRONE_GITEA_GIT_USERNAME: '${MAISON_CI_GITEA_USERNAME}'
       DRONE_GITEA_GIT_PASSWORD: '${MAISON_CI_GITEA_PASSWORD}'
       DRONE_DATABASE_DRIVER: mysql
@@ -128,14 +128,14 @@ services:
     network_mode: host
     environment:
       RUNAS_UID0: 'false'
-  nginx:
-    image: maison:nginx
-    build: ./nginx
+  web:
+    image: maison:web
+    build: ./web
     restart: on-failure
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './nginx/htpasswd:/etc/nginx/htpasswd'
+      - './web/htpasswd:/etc/nginx/htpasswd'
     expose:
      - '80'
      - '443'
@@ -143,8 +143,20 @@ services:
      - '80:80'
      - '443:443'
     networks:
-      - maison
+      maison:
+        aliases:
+          - web
+          - '${MAISON_NETWORK_DOMAIN}'
+          - '${MAISON_HAB_DOMAIN}'
+          - '${MAISON_OLA_DOMAIN}'
+          - '${MAISON_VCS_DOMAIN}'
+          - '${MAISON_CI_DOMAIN}'
     environment:
       MAISON_DOMAINS: '${MAISON_DOMAINS}'
+      MAISON_NETWORK_DOMAIN: '${MAISON_NETWORK_DOMAIN}'
+      MAISON_HAB_DOMAIN: '${MAISON_HAB_DOMAIN}'
+      MAISON_OLA_DOMAIN: '${MAISON_OLA_DOMAIN}'
+      MAISON_VCS_DOMAIN: '${MAISON_VCS_DOMAIN}'
+      MAISON_CI_DOMAIN: '${MAISON_CI_DOMAIN}'
 networks:
   maison:

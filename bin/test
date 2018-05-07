@@ -6,22 +6,28 @@ cd `dirname "$0"`/..
 exit_code=0
 trap '(( exit_code |= $? ))' ERR
 
+if [ ! -f ./.env ]; then
+    ./bin/build
+    exit 1
+fi
+. .env
+
 username=maisontest
 password=bienvenue
-htpasswd -b ./nginx/htpasswd $username $password
+htpasswd -b ./web/htpasswd $username $password
 
 # Connect to the Unifi controller.
-#curl --verbose -f --user $username:$password http://network.maison.bartfeenstra.com > /dev/null
+#curl --verbose -f --user $username:$password http://${MAISON_NETWORK_DOMAIN} > /dev/null
 # Connect to OLA.
-curl --verbose -f --user $username:$password http://ola.maison.bartfeenstra.com > /dev/null
+curl --verbose -f --user $username:$password http://${MAISON_OLA_DOMAIN} > /dev/null
 # Connect to openHAB.
-curl --verbose -f --user $username:$password http://hab.maison.bartfeenstra.com > /dev/null
+curl --verbose -f --user $username:$password http://${MAISON_HAB_DOMAIN} > /dev/null
 # Connect to Gitea.
-curl --verbose -f http://git.maison.bartfeenstra.com > /dev/null
+curl --verbose -f http://${MAISON_VCS_DOMAIN} > /dev/null
 # Connect to Drone.
-curl --verbose -f http://ci.maison.bartfeenstra.com > /dev/null
+curl --verbose -f http://${MAISON_CI_DOMAIN} > /dev/null
 
-htpasswd -D ./nginx/htpasswd $username
+htpasswd -D ./web/htpasswd $username
 
 # Stop aggregating test exit codes.
 trap - ERR
