@@ -35,8 +35,10 @@ sleep 20
 ### Gitea.
 # The administrative user.
 docker exec maison_vcs_1 /app/gitea/gitea admin create-user --name ${MAISON_VCS_ADMIN_USERNAME} --password ${MAISON_VCS_ADMIN_PASSWORD} --email ${MAISON_VCS_ADMIN_EMAIL} --admin || true
+docker exec maison_vcs_1 /app/gitea/gitea admin change-password --username ${MAISON_VCS_ADMIN_USERNAME} --password ${MAISON_VCS_ADMIN_PASSWORD}
 # The CI (Drone) user.
 docker exec maison_vcs_1 /app/gitea/gitea admin create-user --name ${MAISON_CI_GITEA_USERNAME} --password ${MAISON_CI_GITEA_PASSWORD} --email ${MAISON_CI_GITEA_EMAIL} --admin || true
+docker exec maison_vcs_1 /app/gitea/gitea admin change-password --username ${MAISON_CI_GITEA_USERNAME} --password ${MAISON_CI_GITEA_PASSWORD}
 
 ### OLA
 docker exec maison_ola_1 ola_patch -i -u 1 -d 1 -p 1
