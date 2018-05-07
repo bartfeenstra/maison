@@ -1,12 +1,4 @@
 version: '3.4'
-x-extra-hosts:
-  &extra_hosts
-  extra_hosts:
-    - "${MAISON_NETWORK_DOMAIN}:web"
-    - "${MAISON_OLA_DOMAIN}:web"
-    - "${MAISON_HAB_DOMAIN}:web"
-    - "${MAISON_VCS_DOMAIN}:web"
-    - "${MAISON_CI_DOMAIN}:web"
 services:
   db:
     image: 'mariadb:10.3'
@@ -70,8 +62,8 @@ services:
       - '/etc/timezone:/etc/timezone:ro'
       - './vcs/data:/data'
     ports:
-      - "3000:3000"
-      - "222:222"
+      - '3000:3000'
+      - '222:222'
     networks:
       maison:
         aliases:
@@ -83,7 +75,6 @@ services:
     depends_on:
       - db
   ci:
-    <<: *extra_hosts
     image: 'drone/drone:0.8'
     restart: on-failure
     volumes:
@@ -155,6 +146,11 @@ services:
       maison:
         aliases:
           - web
+          - '${MAISON_NETWORK_DOMAIN}'
+          - '${MAISON_HAB_DOMAIN}'
+          - '${MAISON_OLA_DOMAIN}'
+          - '${MAISON_VCS_DOMAIN}'
+          - '${MAISON_CI_DOMAIN}'
     environment:
       MAISON_NETWORK_DOMAIN: '${MAISON_NETWORK_DOMAIN}'
       MAISON_HAB_DOMAIN: '${MAISON_HAB_DOMAIN}'
