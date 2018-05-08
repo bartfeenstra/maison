@@ -22,3 +22,6 @@
 !/vcs/data/gitea/conf
 # We commit the *.envtpl file instead.
 /vcs/data/gitea/conf/app.ini
+
+### Monitoring
+/monitor/data
