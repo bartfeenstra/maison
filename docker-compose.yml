@@ -62,7 +62,6 @@ services:
       - '/etc/timezone:/etc/timezone:ro'
       - './vcs/data:/data'
     ports:
-      - '3000:3000'
       - '222:222'
     networks:
       maison:
