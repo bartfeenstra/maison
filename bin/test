@@ -26,6 +26,8 @@ curl --verbose -f --user $username:$password http://${MAISON_HAB_DOMAIN} > /dev/
 curl --verbose -f http://${MAISON_VCS_DOMAIN} > /dev/null
 # Connect to Drone.
 curl --verbose -f http://${MAISON_CI_DOMAIN} > /dev/null
+# Connect to Grafana.
+curl --verbose -f --user $username:$password http://${MAISON_MONITOR_DOMAIN} > /dev/null
 
 htpasswd -D ./web/htpasswd $username
 
