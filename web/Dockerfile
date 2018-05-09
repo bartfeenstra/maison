@@ -1,4 +1,4 @@
-FROM nginx:1.13.12-alpine
+FROM nginx:1.13-alpine
 
 RUN apk add --no-cache iproute2 socat python2 py2-pip bash
 RUN pip2 install jinja2
