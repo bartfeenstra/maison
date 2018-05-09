@@ -1,4 +1,4 @@
-FROM debian:9
+FROM debian:9-slim
 
 ENV TERM linux
 ENV ENV DEBIAN_FRONTEND noninteractive
