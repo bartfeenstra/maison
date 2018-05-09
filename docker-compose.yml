@@ -157,6 +157,8 @@ services:
       MAISON_VCS_DOMAIN: '${MAISON_VCS_DOMAIN}'
       MAISON_CI_DOMAIN: '${MAISON_CI_DOMAIN}'
       MAISON_MONITOR_DOMAIN: '${MAISON_MONITOR_DOMAIN}'
+    depends_on:
+      - syslog
   monitor:
     image: 'grafana/grafana:5.1.1'
     restart: on-failure
@@ -175,5 +177,15 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: '${MAISON_MONITOR_ADMIN_PASSWORD}'
       GF_SERVER_DOMAIN: 'http://${MAISON_MONITOR_DOMAIN}'
       GF_SERVER_ROOT_URL: 'http://${MAISON_MONITOR_DOMAIN}'
+  syslog:
+    image: 'jumanjiman/rsyslog'
+    restart: on-failure
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    networks:
+      maison:
+        aliases:
+          - syslog
 networks:
   maison:
