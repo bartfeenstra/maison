@@ -1,8 +1,7 @@
-FROM nginx:1.13
+FROM nginx:1.13-alpine
 
-RUN apt-get update && apt-get upgrade -y \
-    && apt-get install -y iproute2 netcat python python-pip
-RUN pip install jinja2
+RUN apk add --no-cache iproute2 socat python2 py2-pip bash
+RUN pip2 install jinja2
 
 # @todo Remove /etc/nginx/conf.d/default.conf?
 COPY ./conf/nginx.conf /etc/nginx/
