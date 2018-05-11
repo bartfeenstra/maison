@@ -72,6 +72,7 @@ services:
       MAISON_VCS_DB_NAME: '${MAISON_VCS_DB_NAME}'
       MAISON_VCS_DB_USERNAME: '${MAISON_VCS_DB_USERNAME}'
       MAISON_VCS_DB_PASSWORD: '${MAISON_VCS_DB_PASSWORD}'
+      MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
     depends_on:
       - db
   ci:
@@ -88,11 +89,11 @@ services:
           - ci
     environment:
       DRONE_OPEN: 'true'
-      DRONE_HOST: 'http://${MAISON_CI_DOMAIN}'
+      DRONE_HOST: '${MAISON_WEB_PROTOCOL}://${MAISON_CI_DOMAIN}'
       DRONE_SECRET: '${MAISON_CI_DRONE_SECRET}'
       DRONE_ADMIN: '${MAISON_VCS_ADMIN_USERNAME}'
       DRONE_GITEA: 'true'
-      DRONE_GITEA_URL: 'http://${MAISON_VCS_DOMAIN}'
+      DRONE_GITEA_URL: '${MAISON_WEB_PROTOCOL}://${MAISON_VCS_DOMAIN}'
       DRONE_GITEA_GIT_USERNAME: '${MAISON_CI_GITEA_USERNAME}'
       DRONE_GITEA_GIT_PASSWORD: '${MAISON_CI_GITEA_PASSWORD}'
       DRONE_DATABASE_DRIVER: mysql
@@ -135,7 +136,8 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './web/htpasswd:/etc/nginx/htpasswd'
+      - './web/data/htpasswd:/etc/nginx/htpasswd'
+      - './web/data/letsencrypt:/etc/letsencrypt'
     expose:
      - '80'
      - '443'
@@ -152,6 +154,8 @@ services:
           - '${MAISON_VCS_DOMAIN}'
           - '${MAISON_CI_DOMAIN}'
     environment:
+      MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
+      MAISON_DOMAINS: '${MAISON_NETWORK_DOMAIN} ${MAISON_HAB_DOMAIN} ${MAISON_OLA_DOMAIN} ${MAISON_VCS_DOMAIN} ${MAISON_CI_DOMAIN}'
       MAISON_NETWORK_DOMAIN: '${MAISON_NETWORK_DOMAIN}'
       MAISON_HAB_DOMAIN: '${MAISON_HAB_DOMAIN}'
       MAISON_OLA_DOMAIN: '${MAISON_OLA_DOMAIN}'

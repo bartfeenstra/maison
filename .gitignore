@@ -8,7 +8,7 @@
 /network/data
 
 ### Web server
-/web/htpasswd
+/web/data
 
 ### openHAB
 # We commit the *.envtpl file instead.
