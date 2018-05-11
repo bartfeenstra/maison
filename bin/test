@@ -14,7 +14,7 @@ fi
 
 username=maisontest
 password=bienvenue
-htpasswd -b ./web/data/htpasswd $username $password
+htpasswd -b ./services/web/data/htpasswd $username $password
 
 # Connect to the Unifi controller.
 #curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_NETWORK_DOMAIN} > /dev/null
@@ -27,7 +27,7 @@ curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_VCS_DOMAIN} > /dev/null
 # Connect to Drone.
 curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_CI_DOMAIN} > /dev/null
 
-htpasswd -D ./web/data/htpasswd $username
+htpasswd -D ./services/web/data/htpasswd $username
 
 # Stop aggregating test exit codes.
 trap - ERR
