@@ -23,10 +23,10 @@ before_script:
   - cp ./travis-ci/.env ./
   - ./bin/build
   - ./bin/start
-  - sleep 20
+  - sleep 30
   - ./bin/provision
   - ./bin/restart
-  - sleep 20
+  - sleep 30
 
 script:
   - ./bin/test
