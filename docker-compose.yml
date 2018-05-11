@@ -29,7 +29,7 @@ services:
     networks:
       maison:
         aliases:
-          - openhab
+          - hab
     environment:
       OPENHAB_HTTP_PORT: '8081'
       MAISON_HAB_DB_NAME: '${MAISON_HAB_DB_NAME}'
