@@ -19,6 +19,8 @@ mkdir -p ./services/web/data
 touch ./services/web/data/htpasswd
 mkdir -p ./services/web/data/letsencrypt
 sudo cp ./services/ola/ftdi.rules /etc/udev/rules.d/
+sudo chown -R `whoami`:docker ./services/*/data
+sudo chmod -R ug+rwx ./services/*/data
 
 sudo groupadd -f -g 9001 openhab
 id -u openhab &>/dev/null || sudo useradd -u 9001 -g openhab -r -s /sbin/nologin openhab && sudo usermod -a -G openhab `whoami`
