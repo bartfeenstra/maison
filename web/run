@@ -17,6 +17,7 @@ hostip=$(ip route show | awk '/default/ {print $3}')
 socat tcp-listen:8080,reuseaddr,fork tcp:$hostip:8080 &
 
 # Obtain HTTPS certificates.
+nginx
 certbot_args="--nginx -n --agree-tos --email bart@mynameisbart.com"
 for domain in ${MAISON_DOMAINS}
 do
@@ -29,5 +30,7 @@ if [ ${MAISON_WEB_PROTOCOL} == 'https' ]; then
 else
     certbot certonly --dry-run $certbot_args || true
 fi;
+nginx -s quit
 
+# Re-launch nginx in the foreground.
 nginx -g 'daemon off;'
