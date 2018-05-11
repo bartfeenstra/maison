@@ -29,4 +29,6 @@ before_script:
   - sleep 30
 
 script:
+  - docker ps
+  - docker logs maison_web_1
   - ./bin/test
