@@ -3,7 +3,7 @@
 # Exit on errors.
 trap 'exit $?' ERR
 
-templates=/etc/nginx/conf.d/*.conf.j2
+templates=/etc/nginx/conf.d/*.conf*.j2
 for template in $templates; do
     python2 -c "
 import os
@@ -12,9 +12,25 @@ print Template(open('$template').read()).render(**os.environ)
 " > ${template::-3}
 done
 
-hostip=$(ip route show | awk '/default/ {print $3}')
 # The Unifi controller runs on the host network. We tunnel the port dynamically so nginx can proxy to localhost.
+hostip=$(ip route show | awk '/default/ {print $3}')
 socat tcp-listen:8080,reuseaddr,fork tcp:$hostip:8080 &
 
-nginx -g 'daemon off;'
+# Obtain HTTPS certificates.
+nginx
+certbot_args="--nginx -n --agree-tos --email bart@mynameisbart.com"
+for domain in ${MAISON_DOMAINS}
+do
+    certbot_args="$certbot_args -d $domain"
+done
+# If HTTPS is not enabled explicitly, use dry runs and allow failures, as those may be caused by non-public domains
+# (*.local), which Let's Encrypt rejects.
+if [ ${MAISON_WEB_PROTOCOL} == 'https' ]; then
+    certbot $certbot_args
+else
+    certbot certonly --dry-run $certbot_args || true
+fi;
+nginx -s quit
 
+# Re-launch nginx in the foreground.
+nginx -g 'daemon off;'
