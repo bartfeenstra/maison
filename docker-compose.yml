@@ -8,29 +8,28 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './db/data:/var/lib/mysql'
-      - './db/conf:/etc/mysql/conf.d'
+      - './services/db/data:/var/lib/mysql'
+      - './services/db/conf:/etc/mysql/conf.d'
     networks:
       maison:
         aliases:
           - db
     environment:
       MYSQL_ROOT_PASSWORD: '${MAISON_DB_ROOT_PASSWORD}'
-  openhab:
-    image: maison:openhab
-    build: ./openhab
+  hab:
+    image: maison:hab
+    build: ./services/hab
     restart: on-failure
     tty: true
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './openhab/addons:/openhab/addons'
-      - './openhab/conf:/openhab/conf'
-      - './openhab/userdata:/openhab/userdata'
+      - './services/hab/conf:/openhab/conf'
+      - './services/hab/data:/openhab/userdata'
     networks:
       maison:
         aliases:
-          - openhab
+          - hab
     environment:
       OPENHAB_HTTP_PORT: '8081'
       MAISON_HAB_DB_NAME: '${MAISON_HAB_DB_NAME}'
@@ -41,7 +40,7 @@ services:
       - ola
   ola:
     image: maison:ola
-    build: ./ola
+    build: ./services/ola
     restart: on-failure
     expose:
      - '9010'
@@ -55,12 +54,13 @@ services:
     privileged: true
   vcs:
     image: maison:vcs
-    build: ./vcs
+    build: ./services/vcs
     restart: on-failure
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './vcs/data:/data'
+      - './services/vcs/data:/data'
+      - './services/vcs/conf/gitea:/data/gitea/conf'
     ports:
       - '222:222'
     networks:
@@ -124,19 +124,19 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './network/data:/unifi'
+      - './services/network/data:/unifi'
     network_mode: host
     environment:
       RUNAS_UID0: 'false'
   web:
     image: maison:web
-    build: ./web
+    build: ./services/web
     restart: on-failure
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './web/data/htpasswd:/etc/nginx/htpasswd'
-      - './web/data/letsencrypt:/etc/letsencrypt'
+      - './services/web/data/htpasswd:/etc/nginx/htpasswd'
+      - './services/web/data/letsencrypt:/etc/letsencrypt'
     expose:
      - '80'
      - '443'
@@ -169,7 +169,7 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './monitor/data:/var/lib/grafana'
+      - './services/monitor/data:/var/lib/grafana'
     networks:
       maison:
         aliases:
@@ -187,14 +187,14 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './search/data:/usr/share/elasticsearch/data'
+      - './services/search/data:/usr/share/elasticsearch/data'
     networks:
       maison:
         aliases:
           - search
   logstash:
     image: maison:logstash
-    build: ./logstash
+    build: ./services/logstash
     restart: on-failure
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
@@ -207,7 +207,7 @@ services:
       - search
   syslog:
     image: maison:syslog
-    build: ./syslog
+    build: ./services/syslog
     restart: on-failure
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
