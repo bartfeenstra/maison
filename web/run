@@ -3,7 +3,7 @@
 # Exit on errors.
 trap 'exit $?' ERR
 
-templates=/etc/nginx/conf.d/*.conf.j2
+templates=/etc/nginx/conf.d/*.conf*.j2
 for template in $templates; do
     python2 -c "
 import os
@@ -20,9 +20,12 @@ socat tcp-listen:8080,reuseaddr,fork tcp:$hostip:8080 &
 for domain in ${MAISON_DOMAINS}
 do
     if [ ! -d "/etc/letsencrypt/live/$domain" ]; then
-    # @todo Make sure to put on a volume, so they don't get lost whenever the container reboots.
-    # @todo This is necessary to prevent hitting Let's Encrypt's rate limits (https://letsencrypt.org/docs/rate-limits/)
-        certbot certonly --standalone --dry-run -n --agree-tos --email bart@mynameisbart.com -d $domain
+        command="certbot certonly --standalone -n --agree-tos --email bart@mynameisbart.com -d $domain"
+        if [ ${MAISON_WEB_PROTOCOL} == 'https' ]; then
+            `$command`
+        else
+            `$command` --dry-run || true
+        fi;
     fi
 done
 certbot renew

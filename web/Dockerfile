@@ -1,6 +1,6 @@
-FROM nginx:1.13-alpine
+FROM nginx:1.14-alpine
 
-RUN apk add --no-cache bash certbot iproute2 socat python2 py2-pip
+RUN apk add --no-cache certbot bash iproute2 socat python2 py2-pip
 RUN pip2 install jinja2
 
 # @todo Remove /etc/nginx/conf.d/default.conf?

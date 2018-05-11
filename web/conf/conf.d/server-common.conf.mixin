@@ -1,8 +1,0 @@
-listen 443 ssl http2;
-ssl_certificate /etc/letsencrypt/live/$host/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/$host/privkey.pem;
-add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-
-location = /favicon.ico {
-    log_not_found off;
-}

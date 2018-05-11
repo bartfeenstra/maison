@@ -13,7 +13,9 @@ if [ ! -f ./.env ]; then
 fi
 mkdir -p ./db/data
 mkdir -p ./network/data
-touch ./web/htpasswd
+mkdir -p ./web/data
+touch ./web/data/htpasswd
+mkdir -p ./web/data/letsencrypt
 sudo cp ./ola/ftdi.rules /etc/udev/rules.d/
 
 sudo groupadd -f -g 9001 openhab

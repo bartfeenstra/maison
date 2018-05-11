@@ -1,6 +1,7 @@
 # Gitea.
 server {
     server_name {{ MAISON_VCS_DOMAIN }};
+    set $maison_domain {{ MAISON_VCS_DOMAIN }};
     include /etc/nginx/conf.d/server-common.conf.mixin;
 
     location / {
