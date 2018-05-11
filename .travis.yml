@@ -23,12 +23,9 @@ before_script:
   - cp ./travis-ci/.env ./
   - ./bin/build
   - ./bin/start
-  - sleep 30
+  - sleep 20
   - ./bin/provision
-  - ./bin/restart
-  - sleep 30
+  - sleep 20
 
 script:
-  - docker ps
-  - docker logs maison_web_1
   - ./bin/test
