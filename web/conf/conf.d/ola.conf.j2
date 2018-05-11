@@ -1,7 +1,6 @@
 # OLA.
 server {
     server_name {{ MAISON_OLA_DOMAIN }};
-    set $maison_domain {{ MAISON_OLA_DOMAIN }};
     include /etc/nginx/conf.d/server-common.conf.mixin;
 
     location / {

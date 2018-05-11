@@ -1,7 +1,6 @@
 # CI.
 server {
     server_name {{ MAISON_CI_DOMAIN }};
-    set $maison_domain {{ MAISON_CI_DOMAIN }};
     include /etc/nginx/conf.d/server-common.conf.mixin;
 
     location / {
