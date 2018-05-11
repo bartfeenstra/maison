@@ -1,7 +1,9 @@
 FROM nginx:1.14-alpine
 
-RUN apk add --no-cache certbot bash iproute2 socat python2 py2-pip
-RUN pip2 install jinja2
+RUN apk add --no-cache --virtual=.build-dependencies gcc libffi-dev python-dev musl-dev openssl-dev \
+    && apk add --no-cache bash iproute2 socat python2 py2-pip \
+    && pip2 install certbot certbot-nginx jinja2 \
+    && apk del .build-dependencies && rm -rf /var/cache/apk/*
 
 # @todo Remove /etc/nginx/conf.d/default.conf?
 COPY ./conf/nginx.conf /etc/nginx/

@@ -16,18 +16,18 @@ done
 hostip=$(ip route show | awk '/default/ {print $3}')
 socat tcp-listen:8080,reuseaddr,fork tcp:$hostip:8080 &
 
-# Request and renew HTTPS certificates.
+# Obtain HTTPS certificates.
+certbot_args="--nginx -n --agree-tos --email bart@mynameisbart.com"
 for domain in ${MAISON_DOMAINS}
 do
-    if [ ! -d "/etc/letsencrypt/live/$domain" ]; then
-        command="certbot certonly --standalone -n --agree-tos --email bart@mynameisbart.com -d $domain"
-        if [ ${MAISON_WEB_PROTOCOL} == 'https' ]; then
-            `$command`
-        else
-            `$command` --dry-run || true
-        fi;
-    fi
+    certbot_args="$certbot_args -d $domain"
 done
-certbot renew
+# If HTTPS is not enabled explicitly, use dry runs and allow failures, as those may be caused by non-public domains
+# (*.local), which Let's Encrypt rejects.
+if [ ${MAISON_WEB_PROTOCOL} == 'https' ]; then
+    certbot $certbot_args
+else
+    certbot certonly --dry-run $certbot_args || true
+fi;
 
 nginx -g 'daemon off;'
