@@ -1,0 +1,10 @@
+# Gitea.
+server {
+    server_name {{ MAISON_VCS_DOMAIN }};
+    include /etc/nginx/conf.d/server-common.conf.mixin;
+
+    location / {
+        include /etc/nginx/conf.d/location-proxy-common.conf.mixin;
+        proxy_pass http://vcs:3000;
+    }
+}
