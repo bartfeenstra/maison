@@ -13,13 +13,14 @@ if [ ! -f ./.env ]; then
 fi
 mkdir -p ./services/db/data
 mkdir -p ./services/monitor/data
+sudo chown -R 472 ./services/monitor/data
 mkdir -p ./services/network/data
 mkdir -p ./services/search/data
 mkdir -p ./services/web/data
 touch ./services/web/data/htpasswd
 mkdir -p ./services/web/data/letsencrypt
 sudo cp ./services/ola/ftdi.rules /etc/udev/rules.d/
-sudo chown -R `whoami`:docker ./services/*/data
+sudo chown -R :docker ./services/*/data
 sudo chmod -R ug+rwx ./services/*/data
 
 sudo groupadd -f -g 9001 openhab
