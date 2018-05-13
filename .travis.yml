@@ -15,6 +15,7 @@ addons:
     - network.maison
     - ola.maison
     - hab.maison
+    - monitor.maison
 
 before_install:
   - sudo /etc/init.d/mysql stop
@@ -25,7 +26,7 @@ before_script:
   - ./bin/start
   - sleep 20
   - ./bin/provision
-  - sleep 60
+  - sleep 20
 
 script:
   - ./bin/test
