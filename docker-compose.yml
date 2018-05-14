@@ -24,8 +24,9 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './services/hab/conf:/openhab/conf'
+      - './services/hab/conf/conf:/openhab/conf'
       - './services/hab/data:/openhab/userdata'
+      - './services/hab/conf/userdata/etc:/openhab/userdata/etc'
     networks:
       maison:
         aliases:
