@@ -25,7 +25,7 @@ before_script:
   - ./bin/start
   - sleep 20
   - ./bin/provision
-  - sleep 20
+  - sleep 40
 
 script:
   - ./bin/test
