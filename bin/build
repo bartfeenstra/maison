@@ -21,6 +21,10 @@ sudo cp ./services/ola/ftdi.rules /etc/udev/rules.d/
 sudo groupadd -f -g 9001 openhab
 id -u openhab &>/dev/null || sudo useradd -u 9001 -g openhab -r -s /sbin/nologin openhab && sudo usermod -a -G openhab `whoami`
 
+# Set up wait-for-it.
+curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > ./bin/wait-for-it
+chmod ugo+rx ./bin/wait-for-it
+
 docker-compose -p maison build $@
 
 # Stop aggregating build step exit codes.

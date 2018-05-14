@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+cd `dirname "$0"`/..
+
+# Exit on errors
+exit_code=0
+trap 'exit $?' ERR
+
+container_ip=`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $1`
+./bin/wait-for-it $container_ip:$2
