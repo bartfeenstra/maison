@@ -29,4 +29,5 @@ before_script:
   - sleep 30
 
 script:
+  - docker ps
   - ./bin/test
