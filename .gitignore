@@ -6,7 +6,7 @@
 
 ### openHAB
 # We commit the *.envtpl file instead.
-/services/hab/conf/services/jdbc.cfg
+/services/hab/conf/conf/services/jdbc.cfg
 
 ### VCS
 !/services/vcs/data/gitea
