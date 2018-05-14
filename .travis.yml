@@ -24,9 +24,7 @@ before_script:
   - cp ./travis-ci/.env ./
   - ./bin/build
   - ./bin/start
-  - sleep 20
   - ./bin/provision
-  - sleep 40
 
 script:
   - docker ps

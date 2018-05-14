@@ -17,17 +17,23 @@ password=bienvenue
 htpasswd -b ./services/web/data/htpasswd $username $password
 
 # Connect to the Unifi controller.
+#./bin/await maison_network_1 8080
 #curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_NETWORK_DOMAIN} > /dev/null
 # Connect to OLA.
+./bin/await maison_ola_1 9090
 curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_OLA_DOMAIN} > /dev/null
-# Connect to openHAB.
+# Connect to openHAB, which can take a long time to boot completely.
+./bin/await maison_hab_1 8081 -t 60
 curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_HAB_DOMAIN} > /dev/null
 # Connect to Gitea.
+./bin/await maison_vcs_1 3000
 curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_VCS_DOMAIN} > /dev/null
-# Connect to Drone.
-curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_CI_DOMAIN} > /dev/null
 # Connect to Grafana.
+./bin/await maison_monitor_1 3000
 curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_MONITOR_DOMAIN} > /dev/null
+# Connect to Drone.
+#./bin/await maison_ci_1 8000
+#curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_CI_DOMAIN} > /dev/null
 
 htpasswd -D ./services/web/data/htpasswd $username
 
