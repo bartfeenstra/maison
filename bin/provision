@@ -12,6 +12,7 @@ fi
 . .env
 
 ### Databases.
+./bin/await maison_db_1 3306
 # openHAB.
 docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${MAISON_HAB_DB_NAME};"
 docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MAISON_HAB_DB_USERNAME}'@'%' IDENTIFIED BY '${MAISON_HAB_DB_PASSWORD}';"
@@ -30,9 +31,9 @@ docker exec maison_db_1 mysql -u ${MAISON_CI_DB_USERNAME} -p${MAISON_CI_DB_PASSW
 
 # Restart services that depend on the database.
 ./bin/restart
-sleep 20
 
 ### Gitea.
+./bin/await maison_vcs_1 3000
 # The administrative user.
 docker exec maison_vcs_1 /app/gitea/gitea admin create-user --name ${MAISON_VCS_ADMIN_USERNAME} --password ${MAISON_VCS_ADMIN_PASSWORD} --email ${MAISON_VCS_ADMIN_EMAIL} --admin || true
 docker exec maison_vcs_1 /app/gitea/gitea admin change-password --username ${MAISON_VCS_ADMIN_USERNAME} --password ${MAISON_VCS_ADMIN_PASSWORD}
