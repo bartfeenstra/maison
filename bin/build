@@ -14,8 +14,10 @@ fi
 mkdir -p ./services/db/data
 mkdir -p ./services/network/data
 mkdir -p ./services/web/data
-touch ./services/web/data/htpasswd
 mkdir -p ./services/web/data/letsencrypt
+sudo chown -R :docker ./services/*/data
+sudo chmod -R ug+rwx ./services/*/data
+touch ./services/web/data/htpasswd
 sudo cp ./services/ola/ftdi.rules /etc/udev/rules.d/
 
 sudo groupadd -f -g 9001 openhab
