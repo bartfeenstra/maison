@@ -32,8 +32,8 @@ curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_VCS_DOMAIN} > /dev/null
 ./bin/await maison_monitor_1 3000
 curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_MONITOR_DOMAIN} > /dev/null
 # Connect to Drone.
-#./bin/await maison_ci_1 8000
-#curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_CI_DOMAIN} > /dev/null
+./bin/await maison_ci_1 8000
+curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_CI_DOMAIN} > /dev/null
 
 htpasswd -D ./services/web/data/htpasswd $username
 

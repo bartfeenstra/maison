@@ -10,11 +10,10 @@ RUN apt-get update && apt-get upgrade -y \
         # OLA devices can be hot-swappable (USB), so we need `sudo ola_patch` to register them with OLA run-time.
         sudo \
         ola \
-        git \
     # Clean caches for a smaller build.
     && apt-get autoremove \
     && apt-get clean \
-    && rm -rf /tmp/* /var/tmp/*
+    && rm -rf /tmp/* /var/lib/apt/lists/* /var/tmp/*
 
 # The ola package creates an "olad" user and sets its home, but fails to create the directory.
 RUN mkdir /usr/lib/olad
@@ -22,7 +21,7 @@ RUN chown olad:olad -R /usr/lib/olad
 RUN service olad start && sleep 1 \
     # Disable all OLA plugins.
     && bash -c 'for pid in {1..99}; do ola_plugin_state -p $pid -s disabled; done' \
-    # Enable sACN.
+    # Enable E1.31 (sACN).
     && ola_plugin_state -p 11 -s enabled \
     # Enable FTDI devices.
     && ola_plugin_state -p 13 -s enabled

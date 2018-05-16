@@ -11,36 +11,41 @@ if [ ! -f ./.env ]; then
 fi
 . .env
 
-### Databases.
-./bin/await maison_db_1 3306
+function provision_app_db {
+    local db_name=$1
+    local db_username=$2
+    local db_password=$3
+    ./bin/await maison_db_1 3306
+    docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS $db_name;"
+    docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '$db_username'@'%' IDENTIFIED BY '$db_password';"
+    docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON $db_name.* TO '$db_username'@'%';"
+    docker exec maison_db_1 mysql -u $db_username -p$db_password -D $db_name -e ""
+}
+
+function provision_vcs_user {
+    local username=$1
+    local password=$2
+    local email_address=$3
+    ./bin/await maison_vcs_1 3000
+    docker exec maison_vcs_1 /app/gitea/gitea admin create-user --name $username --password $password --email $email_address "${@:4}" || true
+    docker exec maison_vcs_1 /app/gitea/gitea admin change-password --username $username --password $password
+}
+
 # openHAB.
-docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${MAISON_HAB_DB_NAME};"
-docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MAISON_HAB_DB_USERNAME}'@'%' IDENTIFIED BY '${MAISON_HAB_DB_PASSWORD}';"
-docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${MAISON_HAB_DB_NAME}.* TO '${MAISON_HAB_DB_USERNAME}'@'%';"
-docker exec maison_db_1 mysql -u ${MAISON_HAB_DB_USERNAME} -p${MAISON_HAB_DB_PASSWORD} -D ${MAISON_HAB_DB_NAME} -e ""
+provision_app_db ${MAISON_HAB_DB_NAME} ${MAISON_HAB_DB_USERNAME} ${MAISON_HAB_DB_PASSWORD}
+
 # Gitea.
-docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${MAISON_VCS_DB_NAME};"
-docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MAISON_VCS_DB_USERNAME}'@'%' IDENTIFIED BY '${MAISON_VCS_DB_PASSWORD}';"
-docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${MAISON_VCS_DB_NAME}.* TO '${MAISON_VCS_DB_USERNAME}'@'%';"
-docker exec maison_db_1 mysql -u ${MAISON_VCS_DB_USERNAME} -p${MAISON_VCS_DB_PASSWORD} -D ${MAISON_VCS_DB_NAME} -e ""
+provision_app_db ${MAISON_VCS_DB_NAME} ${MAISON_VCS_DB_USERNAME} ${MAISON_VCS_DB_PASSWORD}
+provision_vcs_user ${MAISON_VCS_ADMIN_USERNAME} ${MAISON_VCS_ADMIN_PASSWORD} ${MAISON_VCS_ADMIN_EMAIL} --admin
+
 # Drone.
-docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE DATABASE IF NOT EXISTS ${MAISON_CI_DB_NAME};"
-docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "CREATE USER IF NOT EXISTS '${MAISON_CI_DB_USERNAME}'@'%' IDENTIFIED BY '${MAISON_CI_DB_PASSWORD}';"
-docker exec maison_db_1 mysql -u root -p${MAISON_DB_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON ${MAISON_CI_DB_NAME}.* TO '${MAISON_CI_DB_USERNAME}'@'%';"
-docker exec maison_db_1 mysql -u ${MAISON_CI_DB_USERNAME} -p${MAISON_CI_DB_PASSWORD} -D ${MAISON_CI_DB_NAME} -e ""
-
-# Restart services that depend on the database.
-./bin/restart
-
-### Gitea.
-./bin/await maison_vcs_1 3000
-# The administrative user.
-docker exec maison_vcs_1 /app/gitea/gitea admin create-user --name ${MAISON_VCS_ADMIN_USERNAME} --password ${MAISON_VCS_ADMIN_PASSWORD} --email ${MAISON_VCS_ADMIN_EMAIL} --admin || true
-docker exec maison_vcs_1 /app/gitea/gitea admin change-password --username ${MAISON_VCS_ADMIN_USERNAME} --password ${MAISON_VCS_ADMIN_PASSWORD}
-# The CI (Drone) user.
-docker exec maison_vcs_1 /app/gitea/gitea admin create-user --name ${MAISON_CI_GITEA_USERNAME} --password ${MAISON_CI_GITEA_PASSWORD} --email ${MAISON_CI_GITEA_EMAIL} --admin || true
-docker exec maison_vcs_1 /app/gitea/gitea admin change-password --username ${MAISON_CI_GITEA_USERNAME} --password ${MAISON_CI_GITEA_PASSWORD}
+provision_app_db ${MAISON_CI_DB_NAME} ${MAISON_CI_DB_USERNAME} ${MAISON_CI_DB_PASSWORD}
+provision_vcs_user ${MAISON_CI_GITEA_USERNAME} ${MAISON_CI_GITEA_PASSWORD} ${MAISON_CI_GITEA_EMAIL} --admin
 
 ### OLA
-docker exec maison_ola_1 ola_patch -i -u 1 -d 1 -p 1
-docker exec maison_ola_1 ola_patch -u 1 -d 2 -p 1
+# Patch the E1.31 (sACN) input.
+docker exec maison_ola_1 ola_patch -i -u ${MAISON_OLA_UNIVERSE} -d 1 -p 1
+# Patch the output.
+if [ ! -z "${MAISON_OLA_OUTPUT_DEVICE}" ] && [ ! -z "${MAISON_OLA_OUTPUT_PORT}" ]; then
+    docker exec maison_ola_1 ola_patch -u ${MAISON_OLA_UNIVERSE} -d ${MAISON_OLA_OUTPUT_DEVICE} -p ${MAISON_OLA_OUTPUT_PORT}
+fi

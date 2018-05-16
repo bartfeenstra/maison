@@ -5,7 +5,7 @@ RUN apk add --no-cache --virtual=.build-dependencies gcc libffi-dev python-dev m
     && pip2 install certbot certbot-nginx jinja2 \
     && apk del .build-dependencies && rm -rf /var/cache/apk/*
 
-# @todo Remove /etc/nginx/conf.d/default.conf?
+RUN rm /etc/nginx/conf.d/default.conf
 COPY ./conf/nginx.conf /etc/nginx/
 COPY ./conf/conf.d/* /etc/nginx/conf.d/
 COPY ./run /maison/run
