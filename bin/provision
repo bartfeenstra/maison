@@ -42,5 +42,9 @@ docker exec maison_vcs_1 /app/gitea/gitea admin create-user --name ${MAISON_CI_G
 docker exec maison_vcs_1 /app/gitea/gitea admin change-password --username ${MAISON_CI_GITEA_USERNAME} --password ${MAISON_CI_GITEA_PASSWORD}
 
 ### OLA
-docker exec maison_ola_1 ola_patch -i -u 1 -d 1 -p 1
-docker exec maison_ola_1 ola_patch -u 1 -d 2 -p 1
+# Patch the E1.31 (sACN) input.
+docker exec maison_ola_1 ola_patch -i -u ${MAISON_OLA_UNIVERSE} -d 1 -p 1
+# Patch the output.
+if [ ! -z "${MAISON_OLA_OUTPUT_DEVICE}" ] && [ ! -z "${MAISON_OLA_OUTPUT_PORT}" ]; then
+    docker exec maison_ola_1 ola_patch -u ${MAISON_OLA_UNIVERSE} -d ${MAISON_OLA_OUTPUT_DEVICE} -p ${MAISON_OLA_OUTPUT_PORT}
+fi
