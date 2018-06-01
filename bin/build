@@ -7,8 +7,8 @@ exit_code=0
 trap 'exit $?' ERR
 
 if [ ! -f ./.env ]; then
-    cp ./.env.dist ./.env
-    echo "Maison is being built for the first time. Update the configuration at `readlink -f ./.env` and run this command (./bin/build) again to finish the build."
+    ./bin/generate-env-passwords .env.dist > .env
+    echo "A new configuration file with random passwords has been saved to `readlink -f ./.env`. Fill in the remaining settings, and run this command (./bin/build) again to finish the build."
     exit 1
 fi
 mkdir -p ./services/db/data

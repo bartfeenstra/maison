@@ -20,7 +20,7 @@ before_install:
   - sudo /etc/init.d/mysql stop
 
 before_script:
-  - cp ./travis-ci/.env ./
+  - ./bin/generate-env-passwords ./travis-ci/.env > .env
   - ./bin/build
   - ./bin/start
   - ./bin/provision
