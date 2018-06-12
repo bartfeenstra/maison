@@ -18,7 +18,8 @@ mkdir -p ./services/web/data/letsencrypt
 sudo chown -R :docker ./services/*/data
 sudo chmod -R ug+rwx ./services/*/data
 touch ./services/web/data/htpasswd
-sudo cp ./services/ola/ftdi.rules /etc/udev/rules.d/
+rules=`docker run --entrypoint /bin/cat bartfeenstra/ola:0.1 /etc/udev/rules.d/ftdi.rules`
+sudo bash -c 'echo "$rules" > /etc/udev/rules.d/ftdi.rules'
 
 sudo groupadd -f -g 9001 openhab
 id -u openhab &>/dev/null || sudo useradd -u 9001 -g openhab -r -s /sbin/nologin openhab && sudo usermod -a -G openhab `whoami`
