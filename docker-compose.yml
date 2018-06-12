@@ -40,8 +40,7 @@ services:
       - db
       - ola
   ola:
-    image: maison:ola
-    build: ./services/ola
+    image: bartfeenstra/ola:0.1
     restart: on-failure
     expose:
      - '9010'
@@ -50,6 +49,9 @@ services:
       maison:
         aliases:
           - ola
+    environment:
+      OLA_PLUGIN_E131: 1
+      OLA_PLUGIN_FTDIDMX: 1
     # The FTDI USB device we need can be (un)mounted at any time, and as any /dev/ttyUSB* device. Because we trust this
     # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
     privileged: true
