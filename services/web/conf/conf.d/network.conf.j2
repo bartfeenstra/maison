@@ -6,6 +6,6 @@ server {
     location / {
         include /etc/nginx/conf.d/location-auth.conf.mixin;
         include /etc/nginx/conf.d/location-proxy-common.conf.mixin;
-        proxy_pass http://localhost:8080;
+        proxy_pass https://localhost:8443;
     }
 }
