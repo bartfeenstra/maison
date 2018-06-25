@@ -14,7 +14,7 @@ done
 
 # The Unifi controller runs on the host network. We tunnel the port dynamically so nginx can proxy to localhost.
 hostip=$(ip route show | awk '/default/ {print $3}')
-socat tcp-listen:8080,reuseaddr,fork tcp:$hostip:8080 &
+socat tcp-listen:8443,reuseaddr,fork tcp:$hostip:8443 &
 
 # Obtain HTTPS certificates.
 nginx
