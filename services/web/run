@@ -1,13 +1,10 @@
 #!/use/bin/env bash
 
-# Exit on errors.
-trap 'exit $?' ERR
+set -e
 
-MAISON_HOST_IP=$(ip route show | awk '/default/ {print $3}')
-
-templates=/etc/nginx/conf.d/*.conf*.j2
+templates=/etc/nginx/conf.d/*.conf*.esh
 for template in $templates; do
-    cat $template | awk '{ line = $0; for (env_var in ENVIRON) { sub("{{ "env_var" }}", ENVIRON[env_var], line) } print line }' > ${template::-3}
+    esh -o "${template::-4}" "$template"
 done
 
 # Obtain HTTPS certificates.

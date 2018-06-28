@@ -1,11 +1,11 @@
-# The Unifi controller software.
+# OLA.
 server {
-    server_name {{ MAISON_NETWORK_DOMAIN }};
+    server_name <%= $MAISON_OLA_DOMAIN %>;
     include /etc/nginx/conf.d/server-common.conf.mixin;
 
     location / {
         include /etc/nginx/conf.d/location-auth.conf.mixin;
         include /etc/nginx/conf.d/location-proxy-common.conf.mixin;
-        proxy_pass https://{{ MAISON_HOST_IP }}:8443;
+        proxy_pass http://ola:9090;
     }
 }

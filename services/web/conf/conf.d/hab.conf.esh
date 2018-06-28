@@ -1,6 +1,6 @@
 # openHAB.
 server {
-    server_name {{ MAISON_HAB_DOMAIN }};
+    server_name <%= $MAISON_HAB_DOMAIN %>;
     include /etc/nginx/conf.d/server-common.conf.mixin;
 
     location / {
