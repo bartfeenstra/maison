@@ -7,11 +7,7 @@ MAISON_HOST_IP=$(ip route show | awk '/default/ {print $3}')
 
 templates=/etc/nginx/conf.d/*.conf*.j2
 for template in $templates; do
-    python2 -c "
-import os
-from jinja2 import Template
-print Template(open('$template').read()).render(**os.environ)
-" > ${template::-3}
+    cat $template | awk '{ line = $0; for (env_var in ENVIRON) { sub("{{ "env_var" }}", ENVIRON[env_var], line) } print line }' > ${template::-3}
 done
 
 # Obtain HTTPS certificates.
