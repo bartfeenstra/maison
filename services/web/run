@@ -1,17 +1,12 @@
 #!/use/bin/env bash
 
-# Exit on errors.
-trap 'exit $?' ERR
+set -e
 
-MAISON_HOST_IP=$(ip route show | awk '/default/ {print $3}')
+export MAISON_HOST_IP=$(ip route show | awk '/default/ {print $3}')
 
-templates=/etc/nginx/conf.d/*.conf*.j2
+templates=/etc/nginx/conf.d/*.conf*.esh
 for template in $templates; do
-    python2 -c "
-import os
-from jinja2 import Template
-print Template(open('$template').read()).render(**os.environ)
-" > ${template::-3}
+    esh -o "${template::-4}" "$template"
 done
 
 # Obtain HTTPS certificates.
