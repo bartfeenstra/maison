@@ -1,0 +1,10 @@
+# CI.
+server {
+    server_name <%= $MAISON_CI_DOMAIN %>;
+    include /etc/nginx/conf.d/server-common.conf.mixin;
+
+    location / {
+        include /etc/nginx/conf.d/location-proxy-common.conf.mixin;
+        proxy_pass http://ci:8000;
+    }
+}

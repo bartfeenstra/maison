@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Test Drone.
+
+set -e
+
+cd `dirname "$0"`/..
+
+./bin/await maison_ci_1 8000
+echo ${MAISON_WEB_PROTOCOL}://${MAISON_CI_DOMAIN}
+curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_CI_DOMAIN} > /dev/null
