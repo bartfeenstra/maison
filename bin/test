@@ -1,53 +1,42 @@
 #!/usr/bin/env bash
 
+set -e
+
 cd `dirname "$0"`/..
 
-# Aggregate test exit codes.
-exit_code=0
-trap '(( exit_code |= $? ))' ERR
+function message {
+    message=$1
+    echo ""
+    echo $message
+    echo ""
+}
 
-if [ ! -f ./.env ]; then
-    ./bin/build
-    exit 1
-fi
+# Prepare the test environment.
+set -a
 . .env
-
 username=maisontest
 password=bienvenue
+set +a
 htpasswd -b ./services/web/data/htpasswd $username $password
 
-# Connect to the Unifi controller.
-./bin/wait-for-it localhost:8080
-curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_NETWORK_DOMAIN} > /dev/null
-# Connect to OLA.
-./bin/await maison_ola_1 9090
-curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_OLA_DOMAIN} > /dev/null
-# Connect to openHAB, which can take a long time to boot completely.
-./bin/await maison_hab_1 8081 -t 60
-curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_HAB_DOMAIN} > /dev/null
-# Connect to Gitea.
-./bin/await maison_vcs_1 3000
-curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_VCS_DOMAIN} > /dev/null
-# Connect to Drone.
-./bin/await maison_ci_1 8000
-curl --verbose -f ${MAISON_WEB_PROTOCOL}://${MAISON_CI_DOMAIN} > /dev/null
-# Connect to the DNS server.
-./bin/wait-for-it localhost:5300
-MAISON_DOMAINS="$MAISON_NETWORK_DOMAIN $MAISON_HAB_DOMAIN $MAISON_OLA_DOMAIN $MAISON_VCS_DOMAIN $MAISON_CI_DOMAIN"
-for domain in ${MAISON_DOMAINS}; do
-    resolved_ip=`docker exec maison_dns_1 getent hosts $domain | awk '{ print $1 }'`
-    ip addr show | grep $resolved_ip
+# Aggregate test results.
+total=0
+failures=0
+for test in ./tests/*; do
+    total=$((total + 1))
+    message "Running test $test..."
+    set +e
+    $test && message "TEST $test PASSED" || { failures=$((failures + 1)) && message "TEST $test FAILED"; }
+    set -e
 done
 
 htpasswd -D ./services/web/data/htpasswd $username
 
-# Stop aggregating test exit codes.
-trap - ERR
-
-if [ $exit_code -eq 0 ]
+if [ $failures -eq 0 ]
 then
-    echo "SUCCESS: ALL TESTS PASSED."
+    message "SUCCESS: $total TEST(S) PASSED."
+    exit
 else
-    echo "ERROR: SOME TESTS FAILED."
+    message "ERROR: $failures OUT OF $total TEST(S) FAILED."
+    exit 1
 fi
-exit $exit_code

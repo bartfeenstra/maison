@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Test the DNS server.
+
+set -e
+
+cd `dirname "$0"`/..
+
+./bin/wait-for-it localhost:5300
+MAISON_DOMAINS="$MAISON_NETWORK_DOMAIN $MAISON_HAB_DOMAIN $MAISON_OLA_DOMAIN $MAISON_VCS_DOMAIN $MAISON_CI_DOMAIN"
+for domain in ${MAISON_DOMAINS}; do
+    resolved_ip=`docker exec maison_dns_1 getent hosts $domain | awk '{ print $1 }'`
+    ip addr show | grep $resolved_ip
+done
