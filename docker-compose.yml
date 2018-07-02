@@ -163,5 +163,21 @@ services:
       MAISON_OLA_DOMAIN: '${MAISON_OLA_DOMAIN}'
       MAISON_VCS_DOMAIN: '${MAISON_VCS_DOMAIN}'
       MAISON_CI_DOMAIN: '${MAISON_CI_DOMAIN}'
+  dns:
+    image: maison:dns
+    build: ./services/dns
+    restart: on-failure
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    ports:
+     - '5300:53'
+     - '5300:53/udp'
+    networks:
+      maison:
+        aliases:
+          - dns
+    environment:
+      MAISON_DOMAINS: '${MAISON_NETWORK_DOMAIN} ${MAISON_HAB_DOMAIN} ${MAISON_OLA_DOMAIN} ${MAISON_VCS_DOMAIN} ${MAISON_CI_DOMAIN}'
 networks:
   maison:
