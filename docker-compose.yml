@@ -133,7 +133,7 @@ services:
       RUNAS_UID0: 'false'
   pihole:
     image: 'diginc/pi-hole:latest'
-    restart: on-failure
+    restart: always
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
