@@ -2,7 +2,7 @@ version: '3.4'
 services:
   db:
     image: 'mariadb:10.3'
-    restart: on-failure
+    restart: always
     ports:
      - '3306:3306'
     volumes:
@@ -19,7 +19,7 @@ services:
   hab:
     image: maison:hab
     build: ./services/hab
-    restart: on-failure
+    restart: always
     tty: true
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
@@ -41,7 +41,7 @@ services:
       - ola
   ola:
     image: bartfeenstra/ola:0.1
-    restart: on-failure
+    restart: always
     expose:
      - '9010'
      - '9090'
@@ -58,7 +58,7 @@ services:
   vcs:
     image: maison:vcs
     build: ./services/vcs
-    restart: on-failure
+    restart: always
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -79,7 +79,7 @@ services:
       - db
   ci:
     image: 'drone/drone:0.8'
-    restart: on-failure
+    restart: always
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -106,7 +106,7 @@ services:
       - vcs
   ci-agent:
     image: 'drone/agent:0.8'
-    restart: on-failure
+    restart: always
     command: agent
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
@@ -123,7 +123,7 @@ services:
       - ci
   network:
     image: 'jacobalberty/unifi:5.7'
-    restart: on-failure
+    restart: always
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -134,7 +134,7 @@ services:
   web:
     image: maison:web
     build: ./services/web
-    restart: on-failure
+    restart: always
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -166,7 +166,7 @@ services:
   dns:
     image: maison:dns
     build: ./services/dns
-    restart: on-failure
+    restart: always
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
