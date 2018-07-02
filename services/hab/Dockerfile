@@ -11,5 +11,5 @@ COPY ./run /maison/run
 
 RUN chmod ug+rx /maison/run
 
-ENTRYPOINT ["bash", "/maison/run"]
+ENTRYPOINT ["/maison/run"]
 CMD ["gosu", "openhab", "./start.sh"]

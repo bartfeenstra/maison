@@ -12,6 +12,6 @@ COPY ./run /maison/run
 
 RUN chmod ug+rx /maison/run
 
-CMD ["bash", "/maison/run"]
+CMD ["/maison/run"]
 
 EXPOSE 80 443

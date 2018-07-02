@@ -4,6 +4,8 @@ RUN apk --no-cache add bash dnsmasq
 
 COPY ./run /maison/run
 
+RUN chmod ug+rx /maison/run
+
 EXPOSE 53 53/udp
 
-ENTRYPOINT ["bash", "/maison/run"]
+ENTRYPOINT ["/maison/run"]
