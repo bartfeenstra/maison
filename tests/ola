@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Test OLA.
+
+set -e
+
+cd `dirname "$0"`/..
+
+./bin/await maison_ola_1 9090
+curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_OLA_DOMAIN} > /dev/null

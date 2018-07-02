@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Test the Unifi controller.
+
+set -e
+
+cd `dirname "$0"`/..
+
+./bin/wait-for-it localhost:8080
+curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_NETWORK_DOMAIN} > /dev/null
