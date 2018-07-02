@@ -3,9 +3,12 @@
 set -e
 
 MAISON_HOST_IP=$(ip route show | awk '/default/ {print $3}')
+MAISON_PIHOLE_IP=$(getent hosts pihole | awk '{ print $1 }')
 
+echo 'ndots:0' > /maison/resolv.conf
+#echo "nameserver $MAISON_PIHOLE_IP" >> /maison/resolv.conf
 for domain in ${MAISON_DOMAINS}; do
     echo "$MAISON_HOST_IP $domain" >> /etc/hosts
 done
 
-dnsmasq -d
+dnsmasq -d -r /maison/resolv.conf

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Test the DNS server.
+
+set -e
+
+cd `dirname "$0"`/..
+
+./bin/wait-for-it localhost:5300
+resolved_ip=`docker exec maison_dns_1 getent hosts adservice.google.com | awk '{ print $1 }'`
+# @todo Fix and finish this.
+test '0.0.0.0' = "$resolved_ip"
