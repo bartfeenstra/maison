@@ -17,8 +17,8 @@ password=bienvenue
 htpasswd -b ./services/web/data/htpasswd $username $password
 
 # Connect to the Unifi controller.
-#./bin/await maison_network_1 8080
-#curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_NETWORK_DOMAIN} > /dev/null
+./bin/wait-for-it localhost:8080
+curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_NETWORK_DOMAIN} > /dev/null
 # Connect to OLA.
 ./bin/await maison_ola_1 9090
 curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_OLA_DOMAIN} > /dev/null
