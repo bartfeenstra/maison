@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 
-cd `dirname "$0"`/..
+set -Eeuo pipefail
 
-# Exit on errors.
-trap 'exit $?' ERR
+cd `dirname "$0"`/..
 
 if [ ! -f ./.env ]; then
     ./bin/build
-    exit 1
 fi
 
 docker-compose -p maison up --scale ci-agent=2 -d

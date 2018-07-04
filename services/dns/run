@@ -1,6 +1,6 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
-set -e
+set -Eeuo pipefail
 
 MAISON_HOST_IP=$(ip route show | awk '/default/ {print $3}')
 

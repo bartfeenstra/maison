@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-cd `dirname "$0"`/..
+set -Eeuo pipefail
 
-# Exit on errors.
-trap 'exit $?' ERR
+cd `dirname "$0"`/..
 
 docker-compose -p maison restart "$@"
