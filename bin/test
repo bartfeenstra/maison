@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -Eeuo pipefail
 
 cd `dirname "$0"`/..
 
@@ -25,9 +25,12 @@ failures=0
 for test in ./tests/*; do
     total=$((total + 1))
     message "Running test $test..."
-    set +e
-    $test && message "TEST $test PASSED" || { failures=$((failures + 1)) && message "TEST $test FAILED"; }
-    set -e
+    if $test; then
+        echo "TEST $test PASSED"
+     else
+        failures=$((failures + 1))
+        echo "TEST $test FAILED"
+    fi
 done
 
 htpasswd -D ./services/web/data/htpasswd $username
