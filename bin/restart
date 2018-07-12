@@ -2,6 +2,6 @@
 
 set -Eeuo pipefail
 
-cd `dirname "$0"`/..
+cd "$(dirname "$0")/.."
 
 docker-compose -p maison restart "$@"

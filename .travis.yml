@@ -9,6 +9,7 @@ addons:
   apt:
     packages:
     - apache2-utils
+    - shellcheck
   hosts:
     - ci.maison
     - git.maison

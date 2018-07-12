@@ -2,7 +2,7 @@
 
 set -Eeuo pipefail
 
-cd `dirname "$0"`/..
+cd "$(dirname "$0")/.."
 
 if [ ! -f ./.env ]; then
     ./bin/build

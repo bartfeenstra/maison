@@ -2,22 +2,22 @@
 
 set -Eeuo pipefail
 
-cd `dirname "$0"`/..
+cd "$(dirname "$0")/.."
 
 function message {
     message=$1
     echo ""
-    echo $message
+    echo "$message"
     echo ""
 }
 
 # Prepare the test environment.
 set -a
 . .env
-username=maisontest
-password=bienvenue
+MAISON_TEST_HTTP_BASIC_AUTH_USERNAME=maisontest
+MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD=bienvenue
 set +a
-htpasswd -b ./services/web/data/htpasswd $username $password
+htpasswd -b ./services/web/data/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME" "$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD"
 
 # Aggregate test results.
 total=0
@@ -33,7 +33,7 @@ for test in ./tests/*; do
     fi
 done
 
-htpasswd -D ./services/web/data/htpasswd $username
+htpasswd -D ./services/web/data/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME"
 
 if [ $failures -eq 0 ]
 then

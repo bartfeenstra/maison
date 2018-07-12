@@ -2,7 +2,7 @@
 
 set -Eeuo pipefail
 
-cd `dirname "$0"`/..
+cd "$(dirname "$0")/.."
 
 ensure_env_mode() {
     chmod u=rw,go= .env
@@ -11,7 +11,7 @@ ensure_env_mode() {
 if [ ! -f ./.env ]; then
     ./bin/generate-env-passwords .env.dist > .env
     ensure_env_mode
-    echo "A new configuration file with random passwords has been saved to `readlink -f ./.env`. Fill in the remaining settings, and run this command (./bin/build) again to finish the build."
+    echo "A new configuration file with random passwords has been saved to $(readlink -f ./.env). Fill in the remaining settings, and run this command (./bin/build) again to finish the build."
     exit 1
 fi
 ensure_env_mode
@@ -22,18 +22,20 @@ mkdir -p ./services/web/data/letsencrypt
 sudo chown -R :docker ./services/*/data
 sudo chmod -R ug+rwx ./services/*/data
 touch ./services/web/data/htpasswd
-rules=`docker run --entrypoint /bin/cat bartfeenstra/ola:0.1 /etc/udev/rules.d/ftdi.rules`
-sudo bash -c 'echo "$rules" > /etc/udev/rules.d/ftdi.rules'
+docker run --entrypoint /bin/cat bartfeenstra/ola:0.1 /etc/udev/rules.d/ftdi.rules | sudo tee -a /etc/udev/rules.d/ftdi.rules
 
 sudo groupadd -f -g 9001 openhab
-id -u openhab &>/dev/null || sudo useradd -u 9001 -g openhab -r -s /sbin/nologin openhab && sudo usermod -a -G openhab `whoami`
+id -u openhab &>/dev/null || sudo useradd -u 9001 -g openhab -r -s /sbin/nologin openhab && sudo usermod -a -G openhab "$(whoami)"
+
+mkdir -p ./vendor/bin
 
 # Set up wait-for-it.
-if [ ! -f ./bin/wait-for-it ]; then
-    curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > ./bin/wait-for-it
-    chmod ugo+rx ./bin/wait-for-it
+if [ ! -f ./vendor/bin/wait-for-it ]; then
+    curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > ./vendor/bin/wait-for-it
 fi
 
-docker-compose -p maison build $@
+chmod ugo+rx ./vendor/bin/*
+
+docker-compose -p maison build "$@"
 
 echo "SUCCESS: ALL BUILD STEPS PASSED."

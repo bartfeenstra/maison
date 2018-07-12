@@ -1,5 +1,5 @@
 ### Third-party files.
-/bin/wait-for-it
+/vendor
 
 ### Docker Compose
 /.env
