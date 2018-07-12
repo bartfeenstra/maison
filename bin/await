@@ -2,7 +2,7 @@
 
 set -Eeuo pipefail
 
-cd `dirname "$0"`/..
+cd "$(dirname "$0")/.."
 
-container_ip=`docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $1`
-./bin/wait-for-it $container_ip:$2 "${@:3}"
+container_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$1")
+./vendor/bin/wait-for-it "$container_ip:$2" "${@:3}"

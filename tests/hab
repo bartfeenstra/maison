@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Test openHAB.
 
-set -e
+set -Eeuo pipefail
 
-cd `dirname "$0"`/..
+cd "$(dirname "$0")/.."
 
 # openHAB can take a long time to boot completely.
 ./bin/await maison_hab_1 8081 -t 60
-curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_HAB_DOMAIN} > /dev/null
+curl --verbose -f --user "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME:$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD" "$MAISON_WEB_PROTOCOL://$MAISON_HAB_DOMAIN" > /dev/null

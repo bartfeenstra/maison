@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Test the Unifi controller.
 
-set -e
+set -Eeuo pipefail
 
-cd `dirname "$0"`/..
+cd "$(dirname "$0")/.."
 
-./bin/wait-for-it localhost:8080
-curl --verbose -f --user $username:$password ${MAISON_WEB_PROTOCOL}://${MAISON_NETWORK_DOMAIN} > /dev/null
+./vendor/bin/wait-for-it localhost:8080
+curl --verbose -f --user "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME:$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD" "$MAISON_WEB_PROTOCOL://$MAISON_NETWORK_DOMAIN" > /dev/null
