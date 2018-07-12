@@ -19,9 +19,9 @@ done
 # If HTTPS is not enabled explicitly, use dry runs and allow failures, as those may be caused by non-public domains
 # (*.local), which Let's Encrypt rejects.
 if [ "$MAISON_WEB_PROTOCOL" == 'https' ]; then
-    certbot "$certbot_args"
+    eval "certbot $certbot_args"
 else
-    certbot certonly --dry-run "$certbot_args" || true
+    eval "certbot certonly --dry-run $certbot_args" || true
 fi;
 nginx -s quit
 
