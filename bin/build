@@ -4,11 +4,17 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
+ensure_env_mode() {
+    chmod u=rw,go= .env
+}
+
 if [ ! -f ./.env ]; then
     ./bin/generate-env-passwords .env.dist > .env
+    ensure_env_mode
     echo "A new configuration file with random passwords has been saved to $(readlink -f ./.env). Fill in the remaining settings, and run this command (./bin/build) again to finish the build."
     exit 1
 fi
+ensure_env_mode
 mkdir -p ./services/db/data
 mkdir -p ./services/network/data
 mkdir -p ./services/web/data
