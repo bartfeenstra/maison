@@ -15,13 +15,13 @@ if [ ! -f ./.env ]; then
     exit 1
 fi
 ensure_env_mode
-mkdir -p ./services/db/data
-mkdir -p ./services/network/data
-mkdir -p ./services/web/data
-mkdir -p ./services/web/data/letsencrypt
-sudo chown -R :docker ./services/*/data
-sudo chmod -R ug+rwx ./services/*/data
-touch ./services/web/data/htpasswd
+mkdir -p ./data/db
+mkdir -p ./data/network
+mkdir -p ./data/web
+mkdir -p ./data/web/letsencrypt
+sudo chown -R :docker ./data/*
+sudo chmod -R ug+rwx ./data/*
+touch ./data/web/htpasswd
 docker run --entrypoint /bin/cat bartfeenstra/ola:0.1 /etc/udev/rules.d/ftdi.rules | sudo tee -a /etc/udev/rules.d/ftdi.rules
 
 sudo groupadd -f -g 9001 openhab

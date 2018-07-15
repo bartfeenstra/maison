@@ -4,12 +4,19 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
+. ./src/bash/upgrade
+
+if [ ! -z "$(current_version)" ]; then
+    echo 'Maison has been installed already. Did you mean ./bin/upgrade?'
+    exit 2
+fi
+
 if [ ! -f ./.env ]; then
     ./bin/build
 fi
 . .env
 
-function provision_app_db {
+function install_app_db {
     local db_name=$1
     local db_username=$2
     local db_password=$3
@@ -20,7 +27,7 @@ function provision_app_db {
     docker exec maison_db_1 mysql -u "$db_username" -p"$db_password" -D "$db_name" -e ""
 }
 
-function provision_vcs_user {
+function install_vcs_user {
     local username=$1
     local password=$2
     local email_address=$3
@@ -30,15 +37,15 @@ function provision_vcs_user {
 }
 
 # openHAB.
-provision_app_db "$MAISON_HAB_DB_NAME" "$MAISON_HAB_DB_USERNAME" "$MAISON_HAB_DB_PASSWORD"
+install_app_db "$MAISON_HAB_DB_NAME" "$MAISON_HAB_DB_USERNAME" "$MAISON_HAB_DB_PASSWORD"
 
 # Gitea.
-provision_app_db "$MAISON_VCS_DB_NAME" "$MAISON_VCS_DB_USERNAME" "$MAISON_VCS_DB_PASSWORD"
-provision_vcs_user "$MAISON_VCS_ADMIN_USERNAME" "$MAISON_VCS_ADMIN_PASSWORD" "$MAISON_VCS_ADMIN_EMAIL" --admin
+install_app_db "$MAISON_VCS_DB_NAME" "$MAISON_VCS_DB_USERNAME" "$MAISON_VCS_DB_PASSWORD"
+install_vcs_user "$MAISON_VCS_ADMIN_USERNAME" "$MAISON_VCS_ADMIN_PASSWORD" "$MAISON_VCS_ADMIN_EMAIL" --admin
 
 # Drone.
-provision_app_db "$MAISON_CI_DB_NAME" "$MAISON_CI_DB_USERNAME" "$MAISON_CI_DB_PASSWORD"
-provision_vcs_user "$MAISON_CI_GITEA_USERNAME" "$MAISON_CI_GITEA_PASSWORD" "$MAISON_CI_GITEA_EMAIL" --admin
+install_app_db "$MAISON_CI_DB_NAME" "$MAISON_CI_DB_USERNAME" "$MAISON_CI_DB_PASSWORD"
+install_vcs_user "$MAISON_CI_GITEA_USERNAME" "$MAISON_CI_GITEA_PASSWORD" "$MAISON_CI_GITEA_EMAIL" --admin
 
 ### OLA
 # Patch the E1.31 (sACN) input.
@@ -47,3 +54,6 @@ docker exec maison_ola_1 ola_patch -i -u ${MAISON_OLA_UNIVERSE} -d 1 -p 1
 if [ ! -z "${MAISON_OLA_OUTPUT_DEVICE}" ] && [ ! -z "${MAISON_OLA_OUTPUT_PORT}" ]; then
     docker exec maison_ola_1 ola_patch -u ${MAISON_OLA_UNIVERSE} -d ${MAISON_OLA_OUTPUT_DEVICE} -p ${MAISON_OLA_OUTPUT_PORT}
 fi
+
+# Persist the currently installed version.
+latest_version > ./.installed_version

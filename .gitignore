@@ -1,19 +1,22 @@
 ### Third-party files.
 /vendor
 
-### Docker Compose
+### Instance-specific directories.
 /.env
-
-### Data directories.
-/services/*/data
+/.installed_version
+/data/*
 
 ### openHAB
 # We commit the *.envtpl file instead.
 /services/hab/conf/conf/services/jdbc.cfg
 
 ### VCS
-!/services/vcs/data/gitea
-/services/vcs/data/gitea/*
-!/services/vcs/data/gitea/conf
+!/data/vcs
+/data/vcs/*
+/data/vcs/gitea/*
+!/data/vcs/gitea/conf
 # We commit the *.envtpl file instead.
 /services/vcs/conf/gitea/app.ini
+
+# Global rules.
+!.gitkeep
