@@ -24,7 +24,8 @@ before_script:
   - ./bin/generate-env-passwords ./travis-ci/.env > .env
   - ./bin/build
   - ./bin/start
-  - ./bin/provision
+  - ./bin/install
+  - ./bin/upgrade
 
 script:
   - ./bin/test

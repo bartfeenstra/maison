@@ -8,7 +8,7 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './services/db/data:/var/lib/mysql'
+      - './data/db:/var/lib/mysql'
       - './services/db/conf:/etc/mysql/conf.d'
     networks:
       maison:
@@ -25,7 +25,7 @@ services:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
       - './services/hab/conf/conf:/openhab/conf'
-      - './services/hab/data:/openhab/userdata'
+      - './data/hab:/openhab/userdata'
       - './services/hab/conf/userdata/etc:/openhab/userdata/etc'
     networks:
       maison:
@@ -62,7 +62,7 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './services/vcs/data:/data'
+      - './data/vcs:/data'
       - './services/vcs/conf/gitea:/data/gitea/conf'
     ports:
       - '222:222'
@@ -127,7 +127,7 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './services/network/data:/unifi'
+      - './data/network:/unifi'
     network_mode: host
     environment:
       RUNAS_UID0: 'false'
@@ -138,8 +138,8 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './services/web/data/htpasswd:/etc/nginx/htpasswd'
-      - './services/web/data/letsencrypt:/etc/letsencrypt'
+      - './data/web/htpasswd:/etc/nginx/htpasswd'
+      - './data/web/letsencrypt:/etc/letsencrypt'
     expose:
      - '80'
      - '443'

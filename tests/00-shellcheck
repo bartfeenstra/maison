@@ -15,6 +15,7 @@ done << 'EOF'
 ^\./services/[^/]*/run$
 ^\./bin/[^/]*$
 ^\./tests/[^/]*$
+^\./upgrades/[^/]*$
 EOF
 
 if $failures; then

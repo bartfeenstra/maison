@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+is_installed() {
+    if [ ! -f ./.installed_version ]; then
+        return 1
+    fi
+}
+
+all_versions() {
+    find ./upgrades 2>/dev/null | grep '^\./upgrades/' | sed -r 's/^\.\/upgrades\/([0-9]+)-.*/\1/'
+}
+
+current_version() {
+    if is_installed; then
+        cat ./.installed_version
+    fi
+}
+
+latest_version() {
+    all_versions | tail -n 1
+}
+
+available_versions() {
+    local current=$(current_version)
+    for version in $(all_versions); do
+        if [[ "$version" -gt "$current" ]]; then
+            echo "$version"
+        fi
+    done
+}
+
+upgrade() {
+    if ! is_installed; then
+        echo 'Maison has not been installed yet. Did you mean ./bin/install?'
+        exit 2
+    fi
+    available_versions
+    while read -r version; do
+        $(ls ./upgrades/$version-*)
+        echo "$version" > ./.installed_version
+    done < <(available_versions)
+}
