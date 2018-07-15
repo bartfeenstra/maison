@@ -38,7 +38,6 @@ upgrade() {
         echo 'Maison has not been installed yet. Did you mean ./bin/install?'
         exit 2
     fi
-    available_versions
     while read -r version; do
         $(ls ./upgrades/$version-*)
         echo "$version" > ./.installed_version
