@@ -1,9 +1,8 @@
 ### Third-party files.
 /vendor
 
-### Instance-specific directories.
+### Instance-specific files and directories.
 /.env
-/.installed_version
 /data/*
 
 ### openHAB

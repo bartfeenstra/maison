@@ -7,6 +7,10 @@ cd "$(dirname "$0")/.."
 failures=false
 while read -r pattern; do
     while read -r file; do
+        if [ ! -f "$file" ]; then
+            continue
+        fi
+
         if ! shellcheck -x "$file"; then
             failures=true
         fi

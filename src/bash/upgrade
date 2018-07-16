@@ -5,7 +5,7 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
 is_installed() {
-    if [ ! -f ./.installed_version ]; then
+    if [ ! -f ./data/.installed_version ]; then
         return 1
     fi
 }
@@ -16,7 +16,7 @@ all_versions() {
 
 current_version() {
     if is_installed; then
-        cat ./.installed_version
+        cat ./data/.installed_version
     fi
 }
 
@@ -40,6 +40,6 @@ upgrade() {
     fi
     while read -r version; do
         $(ls ./upgrades/$version-*)
-        echo "$version" > ./.installed_version
+        echo "$version" > ./data/.installed_version
     done < <(available_versions)
 }
