@@ -15,13 +15,13 @@ if [ ! -f ./.env ]; then
     exit 1
 fi
 ensure_env_mode
-mkdir -p ./data/db
-mkdir -p ./data/network
-mkdir -p ./data/web
-mkdir -p ./data/web/letsencrypt
-sudo chown -R :docker ./data/*
-sudo chmod -R ug+rwx ./data/*
-touch ./data/web/htpasswd
+mkdir -p ./data/services/db
+mkdir -p ./data/services/network
+mkdir -p ./data/services/web
+mkdir -p ./data/services/web/letsencrypt
+sudo chown -R :docker ./data/services/*
+sudo chmod -R ug+rwx ./data/services/*
+touch ./data/services/web/htpasswd
 docker run --entrypoint /bin/cat bartfeenstra/ola:0.1 /etc/udev/rules.d/ftdi.rules | sudo tee -a /etc/udev/rules.d/ftdi.rules
 
 sudo groupadd -f -g 9001 openhab
@@ -32,6 +32,10 @@ mkdir -p ./vendor/bin
 # Set up wait-for-it.
 if [ ! -f ./vendor/bin/wait-for-it ]; then
     curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > ./vendor/bin/wait-for-it
+fi
+# Set up shUnit2.
+if [[ ! -d ./vendor/shunit2 ]]; then
+    git clone https://github.com/kward/shunit2.git ./vendor/shunit2
 fi
 
 chmod ugo+rx ./vendor/bin/*

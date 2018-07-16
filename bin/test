@@ -17,12 +17,15 @@ set -a
 MAISON_TEST_HTTP_BASIC_AUTH_USERNAME=maisontest
 MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD=bienvenue
 set +a
-htpasswd -b ./data/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME" "$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD"
+htpasswd -b ./data/services/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME" "$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD"
 
 # Aggregate test results.
 total=0
 failures=0
-for test in ./tests/*; do
+while read -r test; do
+    if [ ! -f "$test" ]; then
+        continue
+    fi
     total=$((total + 1))
     message "Running test $test..."
     if $test; then
@@ -31,9 +34,9 @@ for test in ./tests/*; do
         failures=$((failures + 1))
         echo "TEST $test FAILED"
     fi
-done
+done < <(find ./tests)
 
-htpasswd -D ./data/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME"
+htpasswd -D ./data/services/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME"
 
 if [ $failures -eq 0 ]
 then

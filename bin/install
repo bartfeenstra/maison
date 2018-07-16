@@ -56,4 +56,4 @@ if [ ! -z "${MAISON_OLA_OUTPUT_DEVICE}" ] && [ ! -z "${MAISON_OLA_OUTPUT_PORT}" 
 fi
 
 # Persist the currently installed version.
-latest_version > ./.installed_version
+latest_version > ./data/.installed_version
