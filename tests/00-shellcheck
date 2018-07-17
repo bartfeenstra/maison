@@ -20,6 +20,7 @@ done << 'EOF'
 ^\./bin/[^/]*$
 ^\./tests/[^/]*$
 ^\./upgrades/[^/]*$
+^\./src/bash/[^/]*$
 EOF
 
 if $failures; then

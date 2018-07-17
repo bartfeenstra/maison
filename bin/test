@@ -41,7 +41,7 @@ htpasswd -D ./data/services/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME"
 if [ $failures -eq 0 ]
 then
     message "SUCCESS: $total TEST(S) PASSED."
-    exit
+    exit 0
 else
     message "ERROR: $failures OUT OF $total TEST(S) FAILED."
     exit 1
