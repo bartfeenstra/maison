@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+docker run --entrypoint /bin/cat bartfeenstra/ola:0.1 /etc/udev/rules.d/ftdi.rules | sudo tee -a /etc/udev/rules.d/ftdi.rules

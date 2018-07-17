@@ -2,13 +2,12 @@
 
 set -Eeuo pipefail
 
+trap 'tearDown' ERR EXIT
+
 cd "$(dirname "$0")/.."
 
-function message {
-    message=$1
-    echo ""
-    echo "$message"
-    echo ""
+tearDown() {
+    htpasswd -D ./data/services/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME"
 }
 
 # Prepare the test environment.
@@ -19,30 +18,5 @@ MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD=bienvenue
 set +a
 htpasswd -b ./data/services/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME" "$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD"
 
-# Aggregate test results.
-total=0
-failures=0
-while read -r test; do
-    if [ ! -f "$test" ]; then
-        continue
-    fi
-    total=$((total + 1))
-    message "Running test $test..."
-    if $test; then
-        echo "TEST $test PASSED"
-     else
-        failures=$((failures + 1))
-        echo "TEST $test FAILED"
-    fi
-done < <(find ./tests)
+find ./tests | grep '^\./tests/.*.test' | xargs ./vendor/bin/krab run --fail-late
 
-htpasswd -D ./data/services/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME"
-
-if [ $failures -eq 0 ]
-then
-    message "SUCCESS: $total TEST(S) PASSED."
-    exit 0
-else
-    message "ERROR: $failures OUT OF $total TEST(S) FAILED."
-    exit 1
-fi
