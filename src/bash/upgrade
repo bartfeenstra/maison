@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 
-set -Eeuo pipefail
-
-cd "$(dirname "$0")/.."
-
 is_installed() {
-    if [ ! -f ./data/.installed_version ]; then
-        return 1
+    # Check for an installation manifest.
+    if [ -f ./data/.installed_version ]; then
+        return 0
     fi
+
+    # Before we kept an installation manifest, there was no sure way to determine whether the application was installed.
+    # Instead, we check if any user data, created by the containers, exists.
+    if grep -q '^\./services/[^/]*/data$' < <(find ./services 2>/dev/null); then
+        echo 0 > ./data/.installed_version
+        return 0
+    fi
+    return 1
 }
 
 all_versions() {
@@ -17,7 +22,9 @@ all_versions() {
 current_version() {
     if is_installed; then
         cat ./data/.installed_version
+        return 0
     fi
+    echo 0
 }
 
 latest_version() {
@@ -25,7 +32,8 @@ latest_version() {
 }
 
 available_versions() {
-    local current=$(current_version)
+    local current
+    current=$(current_version)
     for version in $(all_versions); do
         if [[ "$version" -gt "$current" ]]; then
             echo "$version"
@@ -39,7 +47,9 @@ upgrade() {
         exit 2
     fi
     while read -r version; do
-        $(ls ./upgrades/$version-*)
+        upgrade="$(ls ./upgrades/"$version"-*)"
+        echo "Running upgrade $upgrade..."
+        $upgrade
         echo "$version" > ./data/.installed_version
     done < <(available_versions)
 }
