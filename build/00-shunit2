@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Set up shUnit2.
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+mkdir -p ./vendor
+if [[ ! -d ./vendor/shunit2 ]]; then
+    git clone https://github.com/kward/shunit2.git ./vendor/shunit2
+fi
