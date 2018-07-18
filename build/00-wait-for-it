@@ -9,3 +9,4 @@ mkdir -p ./vendor/bin
 if [ ! -f ./vendor/bin/wait-for-it ]; then
     curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh > ./vendor/bin/wait-for-it
 fi
+chmod ugo+rx ./vendor/bin/wait-for-it
