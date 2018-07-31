@@ -10,7 +10,7 @@ if [ ! -d ./vendor/krab ]; then
     git clone https://github.com/bartfeenstra/krab.git ./vendor/krab
     chmod ugo+rx ./vendor/krab/bin/krab
 fi
-git -C ./vendor/krab fetch --prune-tags
+git -C ./vendor/krab fetch -f
 git -C ./vendor/krab checkout 0.2
 
 find ./build | grep '^\./build/[^/]*' | xargs realpath | xargs ./vendor/krab/bin/krab run
