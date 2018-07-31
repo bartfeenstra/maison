@@ -5,10 +5,12 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
 # Set up Krab.
-mkdir -p ./vendor/bin
-if [ ! -f ./vendor/bin/krab ]; then
-    curl https://raw.githubusercontent.com/bartfeenstra/krab/0.1/krab > ./vendor/bin/krab
+mkdir -p ./vendor
+if [ ! -d ./vendor/krab ]; then
+    git clone https://github.com/bartfeenstra/krab.git ./vendor/krab
+    chmod ugo+rx ./vendor/krab/bin/krab
 fi
-chmod ugo+rx ./vendor/bin/krab
+git -C ./vendor/krab fetch --prune-tags
+git -C ./vendor/krab checkout 0.2
 
-find ./build | grep '^\./build/[^/]*' | xargs ./vendor/bin/krab run
+find ./build | grep '^\./build/[^/]*' | xargs realpath | xargs ./vendor/krab/bin/krab run

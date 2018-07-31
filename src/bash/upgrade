@@ -43,12 +43,12 @@ available_versions() {
 
 upgrade() {
     if ! is_installed; then
-        ./vendor/bin/krab stdio-alert 'Maison has not been installed yet. Did you mean ./bin/install?'
+        ./vendor/krab/bin/krab stdio-alert 'Maison has not been installed yet. Did you mean ./bin/install?'
         exit 2
     fi
     while read -r version; do
         upgrade="$(ls ./upgrades/"$version"-*)"
-        ./vendor/bin/krab stdio-inform "Running upgrade $upgrade..."
+        ./vendor/krab/bin/krab stdio-inform "Running upgrade $upgrade..."
         $upgrade
         echo "$version" > ./data/.installed_version
     done < <(available_versions)
