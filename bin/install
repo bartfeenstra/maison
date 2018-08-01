@@ -4,9 +4,7 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-. ./src/bash/upgrade
-
-if is_installed; then
+if [ -f ./data/.krab/installed_version ]; then
     ./vendor/krab/bin/krab stdio-alert 'Maison has been installed already. Did you mean ./bin/upgrade?'
     exit 2
 fi
@@ -56,4 +54,4 @@ if [ ! -z "${MAISON_OLA_OUTPUT_DEVICE}" ] && [ ! -z "${MAISON_OLA_OUTPUT_PORT}" 
 fi
 
 # Persist the currently installed version.
-latest_version > ./data/.installed_version
+./vendor/krab/bin/krab migrate-install ./data/.krab ./migrations
