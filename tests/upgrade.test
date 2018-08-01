@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+cd "$(dirname "$0")/.." || exit
+
+setUp() {
+    maison_root=$(mktemp -d)
+}
+
+test_upgrade_uninstalled() {
+    rsync -ra --exclude='.git' --exclude='data/*' ./ "$maison_root"
+    rm -r "$maison_root/migrations/*"
+
+    eval "$maison_root/bin/upgrade" &>/dev/null
+    assertEquals 2 "$?"
+}
+
+test_upgrade_installed_krab_0_1() {
+    rsync -ra --exclude='.git' --exclude='data/*' ./ "$maison_root"
+    rm -r "$maison_root/migrations/*"
+    echo 0 > "$maison_root/data/.installed_version"
+
+    eval "$maison_root/bin/upgrade" &>/dev/null
+    assertEquals 0 "$?"
+}
+
+test_upgrade_installed_krab_0_2() {
+    rsync -ra --exclude='.git' --exclude='data/*' ./ "$maison_root"
+    rm -r "$maison_root/migrations/*"
+    mkdir -p "$maison_root/data/.krab"
+    echo 0 > "$maison_root/data/.krab/installed_version"
+
+    eval "$maison_root/bin/upgrade" &>/dev/null
+    assertEquals 0 "$?"
+}
+
+tearDown() {
+    rm -rf "$maison_root"
+}
+
+. ./vendor/shunit2/shunit2

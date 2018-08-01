@@ -17,10 +17,10 @@ while read -r pattern; do
     done < <(find ./ 2>/dev/null | grep "$pattern")
 done << 'EOF'
 ^\./services/[^/]*/run$
-^\./bin/[^/]*$
-^\./tests/[^/]*$
-^\./upgrades/[^/]*$
-^\./src/bash/[^/]*$
+^\./bin/.*$
+^\./tests/.*$
+^\./migrations/.*$
+^\./src/bash/.*$
 EOF
 
 if $failures; then

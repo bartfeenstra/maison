@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd "$(dirname "$0")/../.."
+cd "$(dirname "$0")/../.." || exit
 
 setUp() {
     maison_root=$(mktemp -d)
@@ -14,7 +14,7 @@ test_upgrade() {
         echo "$service" | rev > "$maison_root/services/$service/data/some-data"
     done
 
-    $maison_root/upgrades/1-single-data-directory
+    eval "$maison_root/migrations/1-single-data-directory"
 
     for service in $services; do
         test -e "$maison_root/services/$service/data"
