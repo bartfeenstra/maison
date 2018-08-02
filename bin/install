@@ -45,13 +45,5 @@ install_vcs_user "$MAISON_VCS_ADMIN_USERNAME" "$MAISON_VCS_ADMIN_PASSWORD" "$MAI
 install_app_db "$MAISON_CI_DB_NAME" "$MAISON_CI_DB_USERNAME" "$MAISON_CI_DB_PASSWORD"
 install_vcs_user "$MAISON_CI_GITEA_USERNAME" "$MAISON_CI_GITEA_PASSWORD" "$MAISON_CI_GITEA_EMAIL" --admin
 
-### OLA
-# Patch the E1.31 (sACN) input.
-docker exec maison_ola_1 ola_patch -i -u ${MAISON_OLA_UNIVERSE} -d 1 -p 1
-# Patch the output.
-if [ ! -z "${MAISON_OLA_OUTPUT_DEVICE}" ] && [ ! -z "${MAISON_OLA_OUTPUT_PORT}" ]; then
-    docker exec maison_ola_1 ola_patch -u ${MAISON_OLA_UNIVERSE} -d ${MAISON_OLA_OUTPUT_DEVICE} -p ${MAISON_OLA_OUTPUT_PORT}
-fi
-
 # Persist the currently installed version.
 ./vendor/krab/bin/krab migrate-install ./data/.krab ./migrations
