@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    app: db
+spec:
+  ports:
+    - port: 3306
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  labels:
+    app: db
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - image: mariadb:10.3
+          name: db
+          volumeMounts:
+            - name: db
+              mountPath: /var/lib/mysql
+          volumeMounts:
+            - name: db-conf
+              mountPath: /etc/mysql/conf.d
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/timezone
+          env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              configMapKeyRef:
+                name: maison
+                key: MYSQL_ROOT_PASSWORD
+      volumes:
+        - name: db
+          hostPath:
+            path: /data/services/db
+        - name: db-conf
+          hostPath:
+            path: /services/db/conf
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: timezone
+          hostPath:
+            path: /etc/timezone

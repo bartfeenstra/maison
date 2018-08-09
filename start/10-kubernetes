@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+kubectl create configmap maison --from-env-file=./.env -o yaml --dry-run | kubectl replace -f -
+
+while read -r kubernetes_config; do
+    kubectl create -f "$kubernetes_config" -o yaml --dry-run | kubectl apply -f -
+done < <(find ./services | grep -E '^\./services/[^/]+/kubernetes\.yml$')
+
+# @todo Replace this with Kubernetes.
+#docker-compose -p maison up --scale ci-agent=2 -d
