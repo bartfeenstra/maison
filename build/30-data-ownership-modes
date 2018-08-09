@@ -5,6 +5,7 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
 mkdir -p ./data/services/consul
+mkdir -p ./data/services/consul-client
 mkdir -p ./data/services/db
 mkdir -p ./data/services/network
 mkdir -p ./data/services/web

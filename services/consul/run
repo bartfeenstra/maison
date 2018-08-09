@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+MAISON_HOST_IP=$(ip route show | awk '/default/ {print $3}')
+
+consul agent -server -bootstrap -ui -data-dir=/consul -bind=$MAISON_HOST_IP
