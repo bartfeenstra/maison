@@ -9,6 +9,6 @@ if [ ! -f ./.env ]; then
 fi
 set -a
 . ./.env
-set +e
+set +a
 
 find ./start -type f -print0 | sort -z | xargs -0 ./vendor/krab/bin/krab run
