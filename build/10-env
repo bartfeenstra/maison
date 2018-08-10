@@ -9,9 +9,8 @@ ensure_env_mode() {
 }
 
 if [ ! -f ./.env ]; then
-    ./bin/generate-env-passwords .env.dist > .env
+    awk -f ./src/awk/generate-env-passwords.awk .env.dist > .env
     ensure_env_mode
-    ./vendor/krab/bin/krab stdio-inform "A new configuration file with random passwords has been saved to $(readlink -f ./.env). Fill in the remaining settings, and run this command (./bin/build) again to finish the build."
-    exit 1
+    ./vendor/krab/bin/krab stdio-inform "A new configuration file with random passwords has been saved to $(readlink -f ./.env)."
 fi
 ensure_env_mode
