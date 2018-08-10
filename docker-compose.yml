@@ -179,5 +179,6 @@ services:
           - dns
     environment:
       MAISON_DOMAINS: '${MAISON_NETWORK_DOMAIN} ${MAISON_HAB_DOMAIN} ${MAISON_OLA_DOMAIN} ${MAISON_VCS_DOMAIN} ${MAISON_CI_DOMAIN}'
+      MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
 networks:
   maison:

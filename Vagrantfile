@@ -13,10 +13,7 @@ Vagrant.configure("2") do |config|
     ip: ENV['MAISON_LOCAL_IP']
 
   config.vm.synced_folder ".", "/maison",
-    id: "default",
-    type: "nfs",
-    nfs_version: 4,
-    nfs_udp: false
+    group: "docker"
 
   config.vm.provision "shell",
     path: "./vagrant/provision",
