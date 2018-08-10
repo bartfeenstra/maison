@@ -21,12 +21,7 @@ before_install:
   - sudo /etc/init.d/mysql stop
 
 before_script:
-  - ./bin/build-dev
-
-  # Fetch the Travis build's public IP and set that as the advertised local IP.
-  - MAISON_LOCAL_IP=$(ip a show dev eth0 | grep 'inet\b' | awk '{ print $2 }' | cut -d/ -f1)
-  - sed -i "s/^MAISON_LOCAL_IP=/MAISON_LOCAL_IP=$MAISON_LOCAL_IP/" ./.env
-
+  - ./bin/build
   - ./bin/start
   - ./bin/install
   - ./bin/upgrade
