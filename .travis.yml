@@ -21,7 +21,7 @@ before_install:
   - sudo /etc/init.d/mysql stop
 
 before_script:
-  - ./bin/build
+  - ./bin/build-dev
   - ./bin/start
   - ./bin/install
   - ./bin/upgrade

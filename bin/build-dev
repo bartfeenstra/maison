@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+./bin/build
+
+# Disable HTTPS.
+sed -Ei 's/^MAISON_WEB_PROTOCOL=.*$/MAISON_WEB_PROTOCOL=http/' ./.env
+
+# Set email addresses.
+sed -Ei 's/^(MAISON_.+)_EMAIL=$/\1_EMAIL=\1@example.com/' ./.env
