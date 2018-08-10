@@ -12,7 +12,7 @@ addons:
     - shellcheck
   hosts:
     - ci.maison
-    - git.maison
+    - vcs.maison
     - network.maison
     - ola.maison
     - hab.maison
