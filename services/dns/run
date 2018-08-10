@@ -5,7 +5,7 @@ set -Eeuo pipefail
 MAISON_HOST_IP=$(ip route show | awk '/default/ {print $3}')
 
 for domain in ${MAISON_DOMAINS}; do
-    echo "$MAISON_HOST_IP $domain" >> /etc/hosts
+    echo "$MAISON_LOCAL_IP $domain" >> /etc/hosts
 done
 
 dnsmasq -d

@@ -4,4 +4,4 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-awk -f ./src/awk/generate-env-passwords.awk "$1"
+vagrant validate

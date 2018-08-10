@@ -17,5 +17,8 @@
 # We commit the *.envtpl file instead.
 /services/vcs/conf/gitea/app.ini
 
+### Development artifacts.
+/.vagrant
+
 # Global rules.
 !.gitkeep
