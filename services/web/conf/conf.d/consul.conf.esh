@@ -1,3 +1,4 @@
+
 server {
     server_name <%= $MAISON_CONSUL_DOMAIN %>;
     include /etc/nginx/conf.d/server-common.conf.mixin;
@@ -5,6 +6,6 @@ server {
     location / {
         include /etc/nginx/conf.d/location-auth.conf.mixin;
         include /etc/nginx/conf.d/location-proxy-common.conf.mixin;
-        proxy_pass http://consul:8500;
+        proxy_pass http://<%= $MAISON_LOCAL_IP %>:8500;
     }
 }
