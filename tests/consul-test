@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Test Consul.
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+./bin/await maison_consul_1 8500
+curl --verbose -f --user "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME:$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD" "$MAISON_WEB_PROTOCOL://$MAISON_CONSUL_DOMAIN" > /dev/null
