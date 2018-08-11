@@ -3,7 +3,7 @@ services:
   consul:
     image: consul:1.2.2
     restart: always
-    command: 'consul agent -server -bootstrap -ui -data-dir=/consul -bind="$MAISON_LOCAL_IP"'
+    command: 'consul agent -server -bootstrap -ui -data-dir=/consul -advertise="$MAISON_LOCAL_IP" -client="$MAISON_LOCAL_IP"'
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
