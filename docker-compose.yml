@@ -8,19 +8,11 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - '/var/run/docker.sock:/var/run/docker.sock'
       - './services/consul/conf:/consul/config'
       - './data/services/consul:/consul/data'
     network_mode: host
     environment:
       MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
-  registrator:
-    image: gliderlabs/registrator:latest
-    restart: always
-    command: 'consul://${MAISON_LOCAL_IP}:8500'
-    volumes:
-      - '/var/run/docker.sock:/tmp/docker.sock'
-    network_mode: host
   db:
     image: 'mariadb:10.3'
     restart: always
