@@ -1,0 +1,18 @@
+<% container_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' maison_ola_1) %>
+{
+    "service": {
+        "name": "ola",
+        "tags": ["maison", "web"],
+        "meta": {
+            "maison_domain": "<%= ${MAISON_OLA_DOMAIN} %>",
+            "maison_proxy": "http://<%= ${container_ip} %>:9090",
+            "maison_auth": "basic"
+        },
+        "checks": [
+            {
+                "tcp": "<%= ${container_ip} %>:9090",
+                "interval": "10s"
+            }
+        ]
+    }
+}

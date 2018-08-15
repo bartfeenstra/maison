@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+. ./run/.env
+
+./vendor/esh ./services/consul/consul/consul-service.json.esh > ./services/consul/conf/consul-service.json
+./vendor/esh ./services/ola/consul/ola-service.json.esh > ./services/consul/conf/ola-service.json
+docker exec maison_consul_1 consul reload -http-addr="$MAISON_LOCAL_IP:8500"

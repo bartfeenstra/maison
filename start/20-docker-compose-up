@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+. ./run/.env
+
+docker-compose -p maison up --scale ci-agent=2 -d

@@ -4,6 +4,11 @@
 ### Instance-specific files and directories.
 /.env
 /data/*
+/run
+
+### Consul
+# These configuration files are generated.
+/services/consul/conf/*
 
 ### openHAB
 # We commit the *.envtpl file instead.

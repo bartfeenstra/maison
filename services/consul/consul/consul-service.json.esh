@@ -1,0 +1,17 @@
+{
+    "service": {
+        "name": "consul",
+        "tags": ["maison", "web"],
+        "meta": {
+            "maison_domain": "<%= ${MAISON_CONSUL_DOMAIN} %>",
+            "maison_proxy": "http://<%= ${MAISON_LOCAL_IP} %>:8500",
+            "maison_auth": "basic"
+        },
+        "checks": [
+            {
+                "tcp": "<%= ${MAISON_LOCAL_IP} %>:8500",
+                "interval": "10s"
+            }
+        ]
+    }
+}

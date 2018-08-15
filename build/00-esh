@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Set up ESH.
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+mkdir -p ./vendor
+if [[ ! -f ./vendor/esh ]]; then
+    curl -o ./vendor/esh https://raw.githubusercontent.com/jirutka/esh/v0.1.1/esh
+    chmod ug+x ./vendor/esh
+fi

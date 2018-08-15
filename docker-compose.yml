@@ -1,16 +1,26 @@
 version: '3.4'
 services:
   consul:
-    image: consul:1.2.2
+    image: maison:consul
+    build: ./services/consul
     restart: always
-    command: 'consul agent -server -bootstrap -ui -data-dir=/consul -advertise="$MAISON_LOCAL_IP" -client="$MAISON_LOCAL_IP"'
+    command: 'consul agent -server -bootstrap -ui -config-dir=/consul/config -data-dir=/consul/data -enable-script-checks -advertise="$MAISON_LOCAL_IP" -client="$MAISON_LOCAL_IP"'
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - './services/consul/conf:/consul/config'
       - './data/services/consul:/consul/data'
     network_mode: host
     environment:
       MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
+  registrator:
+    image: gliderlabs/registrator:latest
+    restart: always
+    command: 'consul://${MAISON_LOCAL_IP}:8500'
+    volumes:
+      - '/var/run/docker.sock:/tmp/docker.sock'
+    network_mode: host
   db:
     image: 'mariadb:10.3'
     restart: always
@@ -159,6 +169,7 @@ services:
       maison:
         aliases:
           - web
+          # @todo How can we get rid of these explicitly defined aliases?
           - '${MAISON_NETWORK_DOMAIN}'
           - '${MAISON_HAB_DOMAIN}'
           - '${MAISON_OLA_DOMAIN}'
@@ -168,12 +179,6 @@ services:
       MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
       MAISON_DOMAINS: '${MAISON_CONSUL_DOMAIN} ${MAISON_NETWORK_DOMAIN} ${MAISON_HAB_DOMAIN} ${MAISON_OLA_DOMAIN} ${MAISON_VCS_DOMAIN} ${MAISON_CI_DOMAIN}'
-      MAISON_CONSUL_DOMAIN: '${MAISON_CONSUL_DOMAIN}'
-      MAISON_NETWORK_DOMAIN: '${MAISON_NETWORK_DOMAIN}'
-      MAISON_HAB_DOMAIN: '${MAISON_HAB_DOMAIN}'
-      MAISON_OLA_DOMAIN: '${MAISON_OLA_DOMAIN}'
-      MAISON_VCS_DOMAIN: '${MAISON_VCS_DOMAIN}'
-      MAISON_CI_DOMAIN: '${MAISON_CI_DOMAIN}'
     depends_on:
       - consul
   dns:
