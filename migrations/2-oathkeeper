@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Consolidate the services' data directories into a single, top-level data directory.
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+. ./.env
+. ./src/bash/maintenance
+
+./bin/start
+install_app_db "$MAISON_AC_DB_NAME" "$MAISON_AC_DB_USERNAME" "$MAISON_AC_DB_PASSWORD"
+docker run -it --rm  --network maison_maison oryd/oathkeeper:v1.0.0-beta.8 migrate sql "mysql://${MAISON_AC_DB_USERNAME}:${MAISON_AC_DB_PASSWORD}@tcp(db:3306)/${MAISON_AC_DB_NAME}"
+./bin/stop
+./bin/start

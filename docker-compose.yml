@@ -16,6 +16,42 @@ services:
           - db
     environment:
       MYSQL_ROOT_PASSWORD: '${MAISON_DB_ROOT_PASSWORD}'
+  ac-api:
+    image: 'oryd/oathkeeper:v1.0.0-beta.8'
+    restart: always
+    command: 'serve api'
+    volumes:
+    - '/etc/localtime:/etc/localtime:ro'
+    - '/etc/timezone:/etc/timezone:ro'
+    networks:
+      maison:
+        aliases:
+          - ac-api
+    environment:
+      PORT: 4456
+      DATABASE_URL: 'mysql://${MAISON_AC_DB_USERNAME}:${MAISON_AC_DB_PASSWORD}@tcp(db:3306)/${MAISON_AC_DB_NAME}'
+      CREDENTIALS_ISSUER_ID_TOKEN_HS256_SECRET: '${MAISON_AC_ISSUER_ID_TOKEN_HS256_SECRET}'
+    depends_on:
+      - db
+  ac-proxy:
+    image: 'oryd/oathkeeper:v1.0.0-beta.8'
+    restart: always
+    command: 'serve proxy'
+    volumes:
+    - '/etc/localtime:/etc/localtime:ro'
+    - '/etc/timezone:/etc/timezone:ro'
+    networks:
+      maison:
+        aliases:
+          - ac-proxy
+    environment:
+      DATABASE_URL: 'mysql://${MAISON_AC_DB_USERNAME}:${MAISON_AC_DB_PASSWORD}@tcp(db:3306)/${MAISON_AC_DB_NAME}'
+      PORT: 4455
+      CREDENTIALS_ISSUER_ID_TOKEN_HS256_SECRET: '${MAISON_AC_ISSUER_ID_TOKEN_HS256_SECRET}'
+      OATHKEEPER_API_URL: 'http://ac-api:4456'
+    depends_on:
+      - db
+      - ac-api
   hab:
     image: maison:hab
     build: ./services/hab
