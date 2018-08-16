@@ -1,0 +1,10 @@
+# Keycloak.
+server {
+    server_name <%= $MAISON_AUTH_DOMAIN %>;
+    include /etc/nginx/conf.d/server-common.conf.mixin;
+
+    location / {
+        include /etc/nginx/conf.d/location-proxy-common.conf.mixin;
+        proxy_pass http://auth:8080;
+    }
+}

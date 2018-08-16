@@ -16,6 +16,25 @@ services:
           - db
     environment:
       MYSQL_ROOT_PASSWORD: '${MAISON_DB_ROOT_PASSWORD}'
+  auth:
+    image: 'jboss/keycloak:4.3.0.Final'
+    restart: always
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    networks:
+      maison:
+        aliases:
+          - auth
+    environment:
+      DB_VENDOR: mariadb
+      DB_ADDR: db
+      DB_PORT: 3306
+      DB_DATABASE: '${MAISON_AUTH_DB_NAME}'
+      DB_USER: '${MAISON_AUTH_DB_USERNAME}'
+      DB_PASSWORD: '${MAISON_AUTH_DB_PASSWORD}'
+    depends_on:
+      - db
   hab:
     image: maison:hab
     build: ./services/hab
@@ -150,6 +169,7 @@ services:
       maison:
         aliases:
           - web
+          - '${MAISON_AUTH_DOMAIN}'
           - '${MAISON_NETWORK_DOMAIN}'
           - '${MAISON_HAB_DOMAIN}'
           - '${MAISON_OLA_DOMAIN}'
@@ -157,7 +177,8 @@ services:
           - '${MAISON_CI_DOMAIN}'
     environment:
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
-      MAISON_DOMAINS: '${MAISON_NETWORK_DOMAIN} ${MAISON_HAB_DOMAIN} ${MAISON_OLA_DOMAIN} ${MAISON_VCS_DOMAIN} ${MAISON_CI_DOMAIN}'
+      MAISON_DOMAINS: '${MAISON_AUTH_DOMAIN} ${MAISON_NETWORK_DOMAIN} ${MAISON_HAB_DOMAIN} ${MAISON_OLA_DOMAIN} ${MAISON_VCS_DOMAIN} ${MAISON_CI_DOMAIN}'
+      MAISON_AUTH_DOMAIN: '${MAISON_AUTH_DOMAIN}'
       MAISON_NETWORK_DOMAIN: '${MAISON_NETWORK_DOMAIN}'
       MAISON_HAB_DOMAIN: '${MAISON_HAB_DOMAIN}'
       MAISON_OLA_DOMAIN: '${MAISON_OLA_DOMAIN}'
@@ -178,7 +199,7 @@ services:
         aliases:
           - dns
     environment:
-      MAISON_DOMAINS: '${MAISON_NETWORK_DOMAIN} ${MAISON_HAB_DOMAIN} ${MAISON_OLA_DOMAIN} ${MAISON_VCS_DOMAIN} ${MAISON_CI_DOMAIN}'
+      MAISON_DOMAINS: '${MAISON_AUTH_DOMAIN} ${MAISON_NETWORK_DOMAIN} ${MAISON_HAB_DOMAIN} ${MAISON_OLA_DOMAIN} ${MAISON_VCS_DOMAIN} ${MAISON_CI_DOMAIN}'
       MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
 networks:
   maison:
