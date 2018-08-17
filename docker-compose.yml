@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   db:
-    image: 'mariadb:10.3'
+    image: 'mariadb:10.1'
     restart: always
     ports:
      - '3306:3306'
@@ -33,6 +33,9 @@ services:
       DB_DATABASE: '${MAISON_AUTH_DB_NAME}'
       DB_USER: '${MAISON_AUTH_DB_USERNAME}'
       DB_PASSWORD: '${MAISON_AUTH_DB_PASSWORD}'
+      KEYCLOAK_USER: '${MAISON_AUTH_ADMIN_USERNAME}'
+      KEYCLOAK_PASSWORD: '${MAISON_AUTH_ADMIN_PASSWORD}'
+      PROXY_ADDRESS_FORWARDING: 'true'
     depends_on:
       - db
   hab:

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Test Keycloak.
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+./bin/await maison_auth_1 8080
+curl --verbose -f "$MAISON_WEB_PROTOCOL://$MAISON_AUTH_DOMAIN" > /dev/null
