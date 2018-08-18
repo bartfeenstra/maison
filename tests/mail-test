@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Test OLA.
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+./bin/await maison_mail_1 25

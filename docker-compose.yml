@@ -16,6 +16,17 @@ services:
           - db
     environment:
       MYSQL_ROOT_PASSWORD: '${MAISON_DB_ROOT_PASSWORD}'
+  mail:
+    image: maison:mail
+    build: ./services/mail
+    restart: always
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    networks:
+      maison:
+        aliases:
+          - mail
   hab:
     image: maison:hab
     build: ./services/hab
