@@ -1,5 +1,15 @@
 version: '3.4'
 services:
+  syslog:
+    image: jumanjiman/rsyslog:latest
+    restart: always
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    networks:
+      maison:
+        aliases:
+          - syslog
   db:
     image: 'mariadb:10.3'
     restart: always
