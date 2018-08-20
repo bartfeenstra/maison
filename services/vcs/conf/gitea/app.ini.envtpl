@@ -55,7 +55,7 @@ INTERNAL_TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE1MjUxNzAxOTB9.j
 [mailer]
 ENABLED = true
 HOST = mailer:25
-FROM = vcs@vcs.${MAISON_WEB_DOMAIN}
+FROM = vcs@vcs.${MAISON_MAILER_DOMAIN}
 USE_SENDMAIL = false
 
 [service]
@@ -67,7 +67,7 @@ REQUIRE_SIGNIN_VIEW               = false
 DEFAULT_KEEP_EMAIL_PRIVATE        = false
 DEFAULT_ALLOW_CREATE_ORGANIZATION = true
 DEFAULT_ENABLE_TIMETRACKING       = true
-NO_REPLY_ADDRESS                  = noreply@vcs.${MAISON_WEB_DOMAIN}
+NO_REPLY_ADDRESS                  = noreply@vcs.${MAISON_MAILER_DOMAIN}
 
 [openid]
 ENABLE_OPENID_SIGNIN = false

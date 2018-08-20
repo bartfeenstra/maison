@@ -99,7 +99,7 @@ mail_owner = postfix
 # $mydomain is used as a default value for many other configuration
 # parameters.
 #
-mydomain = <%= $MAISON_WEB_DOMAIN %>
+mydomain = <%= $MAISON_MAILER_DOMAIN %>
 
 # SENDING MAIL
 # 

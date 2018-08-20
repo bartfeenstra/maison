@@ -38,7 +38,7 @@ services:
         aliases:
           - mailer
     environment:
-      MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
+      MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
   hab:
     image: maison:hab
     build: ./services/hab
@@ -99,6 +99,7 @@ services:
       MAISON_VCS_DB_PASSWORD: '${MAISON_VCS_DB_PASSWORD}'
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
+      MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
     depends_on:
       - db
   ci:
