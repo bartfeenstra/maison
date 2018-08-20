@@ -6,4 +6,4 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
 ./vendor/bin/wait-for-it localhost:8080
-curl --verbose -f --user "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME:$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD" "$MAISON_WEB_PROTOCOL://$MAISON_NETWORK_DOMAIN" > /dev/null
+curl --verbose -f --user "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME:$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD" "$MAISON_WEB_PROTOCOL://network.$MAISON_WEB_DOMAIN" > /dev/null
