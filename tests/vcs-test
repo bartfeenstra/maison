@@ -6,4 +6,4 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
 ./bin/await maison_vcs_1 3000
-curl --verbose -f "$MAISON_WEB_PROTOCOL://$MAISON_VCS_DOMAIN" > /dev/null
+curl --verbose -f "$MAISON_WEB_PROTOCOL://vcs.$MAISON_WEB_DOMAIN" > /dev/null
