@@ -5,4 +5,4 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-./bin/await maison_mail_1 25
+./bin/await maison_mailer_1 25
