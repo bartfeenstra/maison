@@ -2,8 +2,8 @@
 
 set -Eeuo pipefail
 
-for domain in ${MAISON_DOMAINS}; do
-    echo "$MAISON_LOCAL_IP $domain" >> /etc/hosts
+for service in ${MAISON_WEB_SERVICES}; do
+    echo "$MAISON_LOCAL_IP $service.$MAISON_WEB_DOMAIN" >> /etc/hosts
 done
 
 dnsmasq -d

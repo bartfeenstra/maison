@@ -10,12 +10,12 @@ TEMP_PATH = /data/gitea/uploads
 
 [server]
 APP_DATA_PATH    = /data/gitea
-SSH_DOMAIN       = ${MAISON_VCS_DOMAIN}
+SSH_DOMAIN       = vcs.${MAISON_WEB_DOMAIN}
 HTTP_PORT        = 3000
-ROOT_URL         = ${MAISON_WEB_PROTOCOL}://${MAISON_VCS_DOMAIN}/
+ROOT_URL         = ${MAISON_WEB_PROTOCOL}://vcs.${MAISON_WEB_DOMAIN}/
 DISABLE_SSH      = false
 SSH_PORT         = 222
-DOMAIN           = ${MAISON_VCS_DOMAIN}
+DOMAIN           = vcs.${MAISON_WEB_DOMAIN}
 LFS_START_SERVER = true
 LFS_CONTENT_PATH = /data/gitea/lfs
 LFS_JWT_SECRET   = JABN_fani7JT5bfPGy48R6mEZzIgFrsyqwQMxthMbNw

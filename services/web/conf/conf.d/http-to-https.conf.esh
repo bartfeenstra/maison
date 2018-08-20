@@ -1,7 +1,7 @@
 <% if [ "$MAISON_WEB_PROTOCOL" = 'https' ]; then %>
     server {
         listen 80;
-        server_name <%= $MAISON_DOMAINS %>;
+        server_name _;
         return 301 https://$host$uri;
     }
 <% fi %>

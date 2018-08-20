@@ -1,6 +1,6 @@
 # The Unifi controller software.
 server {
-    server_name <%= $MAISON_NETWORK_DOMAIN %>;
+    server_name network.<%= $MAISON_WEB_DOMAIN %>;
     include /etc/nginx/conf.d/server-common.conf.mixin;
 
     location / {
