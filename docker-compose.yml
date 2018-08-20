@@ -1,5 +1,15 @@
 version: '3.4'
 services:
+  syslog:
+    image: jumanjiman/rsyslog:latest
+    restart: always
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    networks:
+      maison:
+        aliases:
+          - syslog
   db:
     image: 'mariadb:10.1'
     restart: always
@@ -38,6 +48,19 @@ services:
       PROXY_ADDRESS_FORWARDING: 'true'
     depends_on:
       - db
+  mailer:
+    image: maison:mailer
+    build: ./services/mailer
+    restart: always
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    networks:
+      maison:
+        aliases:
+          - mailer
+    environment:
+      MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
   hab:
     image: maison:hab
     build: ./services/hab
@@ -97,6 +120,8 @@ services:
       MAISON_VCS_DB_USERNAME: '${MAISON_VCS_DB_USERNAME}'
       MAISON_VCS_DB_PASSWORD: '${MAISON_VCS_DB_PASSWORD}'
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
+      MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
+      MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
     depends_on:
       - db
   ci:
@@ -113,11 +138,11 @@ services:
           - ci
     environment:
       DRONE_OPEN: 'true'
-      DRONE_HOST: '${MAISON_WEB_PROTOCOL}://${MAISON_CI_DOMAIN}'
+      DRONE_HOST: '${MAISON_WEB_PROTOCOL}://ci.${MAISON_WEB_DOMAIN}'
       DRONE_SECRET: '${MAISON_CI_DRONE_SECRET}'
       DRONE_ADMIN: '${MAISON_VCS_ADMIN_USERNAME}'
       DRONE_GITEA: 'true'
-      DRONE_GITEA_URL: '${MAISON_WEB_PROTOCOL}://${MAISON_VCS_DOMAIN}'
+      DRONE_GITEA_URL: '${MAISON_WEB_PROTOCOL}://vcs.${MAISON_WEB_DOMAIN}'
       DRONE_GITEA_GIT_USERNAME: '${MAISON_CI_GITEA_USERNAME}'
       DRONE_GITEA_GIT_PASSWORD: '${MAISON_CI_GITEA_PASSWORD}'
       DRONE_DATABASE_DRIVER: mysql
@@ -172,21 +197,16 @@ services:
       maison:
         aliases:
           - web
-          - '${MAISON_AUTH_DOMAIN}'
-          - '${MAISON_NETWORK_DOMAIN}'
-          - '${MAISON_HAB_DOMAIN}'
-          - '${MAISON_OLA_DOMAIN}'
-          - '${MAISON_VCS_DOMAIN}'
-          - '${MAISON_CI_DOMAIN}'
+          - 'auth.${MAISON_WEB_DOMAIN}'
+          - 'network.${MAISON_WEB_DOMAIN}'
+          - 'hab.${MAISON_WEB_DOMAIN}'
+          - 'ola.${MAISON_WEB_DOMAIN}'
+          - 'vcs.${MAISON_WEB_DOMAIN}'
+          - 'ci.${MAISON_WEB_DOMAIN}'
     environment:
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
-      MAISON_DOMAINS: '${MAISON_AUTH_DOMAIN} ${MAISON_NETWORK_DOMAIN} ${MAISON_HAB_DOMAIN} ${MAISON_OLA_DOMAIN} ${MAISON_VCS_DOMAIN} ${MAISON_CI_DOMAIN}'
-      MAISON_AUTH_DOMAIN: '${MAISON_AUTH_DOMAIN}'
-      MAISON_NETWORK_DOMAIN: '${MAISON_NETWORK_DOMAIN}'
-      MAISON_HAB_DOMAIN: '${MAISON_HAB_DOMAIN}'
-      MAISON_OLA_DOMAIN: '${MAISON_OLA_DOMAIN}'
-      MAISON_VCS_DOMAIN: '${MAISON_VCS_DOMAIN}'
-      MAISON_CI_DOMAIN: '${MAISON_CI_DOMAIN}'
+      MAISON_WEB_SERVICES: '${MAISON_WEB_SERVICES}'
+      MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
   dns:
     image: maison:dns
     build: ./services/dns
@@ -202,7 +222,8 @@ services:
         aliases:
           - dns
     environment:
-      MAISON_DOMAINS: '${MAISON_AUTH_DOMAIN} ${MAISON_NETWORK_DOMAIN} ${MAISON_HAB_DOMAIN} ${MAISON_OLA_DOMAIN} ${MAISON_VCS_DOMAIN} ${MAISON_CI_DOMAIN}'
+      MAISON_WEB_SERVICES: '${MAISON_WEB_SERVICES}'
+      MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
       MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
 networks:
   maison:
