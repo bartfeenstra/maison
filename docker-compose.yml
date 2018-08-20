@@ -26,6 +26,19 @@ services:
           - db
     environment:
       MYSQL_ROOT_PASSWORD: '${MAISON_DB_ROOT_PASSWORD}'
+  mailer:
+    image: maison:mailer
+    build: ./services/mailer
+    restart: always
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    networks:
+      maison:
+        aliases:
+          - mailer
+    environment:
+      MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
   hab:
     image: maison:hab
     build: ./services/hab
@@ -85,6 +98,8 @@ services:
       MAISON_VCS_DB_USERNAME: '${MAISON_VCS_DB_USERNAME}'
       MAISON_VCS_DB_PASSWORD: '${MAISON_VCS_DB_PASSWORD}'
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
+      MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
+      MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
     depends_on:
       - db
   ci:
