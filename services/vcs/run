@@ -2,10 +2,7 @@
 
 set -Eeuo pipefail
 
-templates="/data/gitea/conf/app.ini"
-for template in $templates; do
-    envsubst < $template.envtpl > $template
-done
+envsubst < /maison/app.ini.envtpl > /data/gitea/conf/app.ini
 
 chown "$(whoami):$(groups | awk '{ print $1 }')" -R /data
 

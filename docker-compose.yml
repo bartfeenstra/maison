@@ -27,7 +27,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: '${MAISON_DB_ROOT_PASSWORD}'
   auth:
-    image: 'jboss/keycloak:4.3.0.Final'
+    image: 'maison:auth'
+    build: ./services/auth
     restart: always
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
@@ -108,7 +109,6 @@ services:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
       - './data/services/vcs:/data'
-      - './services/vcs/conf/gitea:/data/gitea/conf'
     ports:
       - '222:222'
     networks:
@@ -123,7 +123,9 @@ services:
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
       MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
     depends_on:
+      - auth
       - db
+      - mailer
   ci:
     image: 'drone/drone:0.8'
     restart: always
