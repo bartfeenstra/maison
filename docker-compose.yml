@@ -223,6 +223,8 @@ services:
     environment:
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
+    depends_on:
+      - auth
   dns:
     image: maison:dns
     build: ./services/dns

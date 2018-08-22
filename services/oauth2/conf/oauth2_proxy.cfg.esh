@@ -3,6 +3,7 @@
 
 ## <addr>:<port> to listen on for HTTP/HTTPS clients
 # http_address = "127.0.0.1:4180"
+http_address = "0.0.0.0:4180"
 # https_address = ":443"
 
 ## TLS Settings
