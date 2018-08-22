@@ -6,17 +6,10 @@ trap 'tearDown' ERR EXIT
 
 cd "$(dirname "$0")/.."
 
-tearDown() {
-    htpasswd -D ./data/services/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME"
-}
-
 # Prepare the test environment.
 set -a
 . .env
-MAISON_TEST_HTTP_BASIC_AUTH_USERNAME=maisontest
-MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD=bienvenue
 set +a
-htpasswd -b ./data/services/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME" "$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD"
 
 find ./tests -type f -name '*-test' -print0 | sort -z | xargs -0 ./vendor/krab/bin/krab run -l
 

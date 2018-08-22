@@ -1,0 +1,10 @@
+# OAuth2 Proxy.
+server {
+    server_name oauth2.<%= $MAISON_WEB_DOMAIN %>;
+    include /etc/nginx/conf.d/server-common.conf.mixin;
+
+    location / {
+        include /etc/nginx/conf.d/location-proxy-common.conf.mixin;
+        proxy_pass http://oauth2:4180;
+    }
+}

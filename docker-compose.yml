@@ -187,7 +187,6 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - './data/services/web/htpasswd:/etc/nginx/htpasswd'
       - './data/services/web/letsencrypt:/etc/letsencrypt'
     expose:
      - '80'
@@ -200,6 +199,7 @@ services:
         aliases:
           - web
           - 'auth.${MAISON_WEB_DOMAIN}'
+          - 'oauth2.${MAISON_WEB_DOMAIN}'
           - 'network.${MAISON_WEB_DOMAIN}'
           - 'hab.${MAISON_WEB_DOMAIN}'
           - 'ola.${MAISON_WEB_DOMAIN}'
@@ -209,6 +209,20 @@ services:
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
       MAISON_WEB_SERVICES: '${MAISON_WEB_SERVICES}'
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
+  oauth2:
+    image: maison:oauth2
+    build: ./services/oauth2
+    restart: always
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+    networks:
+      maison:
+        aliases:
+          - oauth2
+    environment:
+      MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
+      MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
   dns:
     image: maison:dns
     build: ./services/dns

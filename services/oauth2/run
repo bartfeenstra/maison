@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+esh -o /etc/oauth2_proxy.cfg /etc/oauth2_proxy.cfg.esh
+
+oauth2_proxy -config /etc/oauth2_proxy.cfg

@@ -1,2 +1,2 @@
-auth_basic "Bienvenue à la Maison";
-auth_basic_user_file /etc/nginx/htpasswd;
+auth_request http://oauth2/auth;
+error_page 401 = http://oauth2/sign_in;
