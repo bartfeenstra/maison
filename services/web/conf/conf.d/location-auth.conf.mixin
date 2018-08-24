@@ -1,2 +1,2 @@
-auth_request http://oauth2/auth;
-error_page 401 = http://oauth2/sign_in;
+auth_request /_oauth2/auth;
+error_page 401 = /_oauth2/sign_in;

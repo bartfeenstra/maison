@@ -13,7 +13,7 @@ http_address = "0.0.0.0:4180"
 ## the OAuth Redirect URL.
 # defaults to the "https://" + requested host header + "/oauth2/callback"
 # redirect_url = "https://internalapp.yourcompany.com/oauth2/callback"
-redirect_url = "http://oauth2/oauth2/callback"
+redirect_url = "http://oauth2.<%= $MAISON_WEB_DOMAIN %>/oauth2/callback"
 
 ## the http url(s) of the upstream endpoint. If multiple, routing is based on path
 # upstreams = [
@@ -41,9 +41,9 @@ email_domains = "*"
 
 ## The OAuth Client ID, Secret
 # client_id = "123456.apps.googleusercontent.com"
-client_id = "web"
+client_id = "oauth2"
 # client_secret = ""
-client_secret = "tiPpx91v9CMdXVvPkAJUuQc"
+client_secret = "<%= $MAISON_OAUTH2_CLIENT_SECRET %>"
 
 ## Pass OAuth Access token to upstream via "X-Forwarded-Access-Token"
 # pass_access_token = false
@@ -78,13 +78,15 @@ client_secret = "tiPpx91v9CMdXVvPkAJUuQc"
 ## Secure   - secure cookies are only sent by the browser of a HTTPS connection (recommended)
 ## HttpOnly - httponly cookies are not readable by javascript (recommended)
 # cookie_name = "_oauth2_proxy"
- cookie_name = "maison"
+cookie_name = "maison_oauth2"
 # cookie_secret = ""
-cookie_secret = "I4FGmKn6b3r7nxu6VBIaCYAJ"
+cookie_secret = "<%= $MAISON_OAUTH2_COOKIE_SECRET %>"
 # cookie_domain = ""
 cookie_domain = ".<%= $MAISON_WEB_DOMAIN %>"
 # cookie_expire = "168h"
+cookie_expire = "168h"
 # cookie_refresh = ""
+cookie_refresh = "24h"
 # cookie_secure = true
 <% if [ "$MAISON_WEB_PROTOCOL" = 'https' ]; then -%>
 cookie_secure = true

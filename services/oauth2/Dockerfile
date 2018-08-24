@@ -2,9 +2,9 @@ FROM alpine:3.8
 
 ENV PATH "/root/go/bin:$PATH"
 
-RUN apk add --no-cache --virtual build-dependencies g++ git go && \
-    go get github.com/bitly/oauth2_proxy && \
-    apk del build-dependencies && \
+RUN apk add --no-cache --virtual .build-dependencies g++ git go && \
+    go get github.com/bitly/oauth2_proxy && go clean -cache && \
+    apk del --purge .build-dependencies && \
     apk add --no-cache bash esh
 
 COPY ./conf/oauth2_proxy.cfg.esh /etc/oauth2_proxy.cfg.esh

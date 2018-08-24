@@ -2,6 +2,7 @@
 server {
     server_name ola.<%= $MAISON_WEB_DOMAIN %>;
     include /etc/nginx/conf.d/server-common.conf.mixin;
+    include /etc/nginx/conf.d/oauth2-auth-request-location.conf.mixin;
 
     location / {
         include /etc/nginx/conf.d/location-auth.conf.mixin;
