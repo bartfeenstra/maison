@@ -5,6 +5,6 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
 rm -rf ./run
-rm ./services/consul/conf/*
+rm -f ./services/consul/conf/*
 
 docker-compose -p maison down "$@"
