@@ -4,6 +4,8 @@ ENV PATH "/root/go/bin:$PATH"
 
 RUN apk add --no-cache --virtual .build-dependencies g++ git go && \
     go get github.com/bitly/oauth2_proxy && go clean -cache && \
+    mv "$(go env GOPATH)"/bin/oauth2_proxy /usr/bin/ && \
+    rm -rf "$(go env GOPATH)" && \
     apk del --purge .build-dependencies && \
     apk add --no-cache bash esh
 
