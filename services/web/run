@@ -13,8 +13,8 @@ nginx -g 'daemon on;'
 
 # Obtain HTTPS certificates.
 certbot_args="--nginx -n --agree-tos --email bart@mynameisbart.com"
-for domain in ${MAISON_DOMAINS}; do
-    certbot_args="$certbot_args -d $domain"
+for service in ${MAISON_WEB_SERVICES}; do
+    certbot_args="$certbot_args -d $service.$MAISON_WEB_DOMAIN"
 done
 # If HTTPS is not enabled explicitly, use dry runs and allow failures, as those may be caused by non-public domains
 # (*.local), which Let's Encrypt rejects.
