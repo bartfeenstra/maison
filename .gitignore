@@ -6,10 +6,6 @@
 /data/*
 /run
 
-### Consul
-# These configuration files are generated.
-/services/consul/conf/*
-
 ### openHAB
 # We commit the *.envtpl file instead.
 /services/hab/conf/conf/services/jdbc.cfg

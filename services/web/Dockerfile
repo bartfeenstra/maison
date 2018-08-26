@@ -12,8 +12,8 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY ./conf/nginx.conf /etc/nginx/
 COPY ./conf/conf.d/* /etc/nginx/conf.d/
 COPY ./run /maison/run
-
-RUN chmod ug+rx /maison/run
+COPY ./run /maison/reload
+RUN chmod ug+rx /maison/run /maison/reload
 
 CMD ["/maison/run"]
 

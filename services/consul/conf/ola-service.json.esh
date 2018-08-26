@@ -1,0 +1,16 @@
+{
+    "service": {
+        "name": "ola",
+        "tags": ["maison", "web"],
+        "meta": {
+            "maison_proxy": "http://ola:9090",
+            "maison_auth": "basic"
+        },
+        "checks": [
+            {
+                "http": "http://ola:9090",
+                "interval": "10s"
+            }
+        ]
+    }
+}

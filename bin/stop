@@ -5,6 +5,5 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
 rm -rf ./run
-rm -f ./services/consul/conf/*
 
 docker-compose -p maison down --remove-orphans

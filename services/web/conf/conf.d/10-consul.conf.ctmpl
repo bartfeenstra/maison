@@ -1,15 +1,24 @@
-{{ printf "%#v" . }}
 {{ range services }}
-    {{ range service (print "web." .Name) }}
-    {{/**
+    {{ print "web." .Name "|any" }}
+    {{ printf "%#v" . }}
+    {{ range service (print "web." .Name "|any") }}
+        {{/*
+            # @todo What is wrong with this print line that it causes crashes?
+            {{ printf "%+v" . }}
+        */}}
+    {{ end }}
+{{ end }}
+
+    {{/*
+    {{ range service (print "web." .Name "|any") }}
+        {{ printf "%#v" . }}
+    {{ end }}
     @todo We need Consul Template 1.9.6, which will be shipped with support for ServiceMeta.
     @todo
     @todo
     @todo
     @todo
-    /}}
         {{ printf "%#v" . }}
-        {{/*
         server {
             server_name {{ .Meta.maison_domain }};
             include /etc/nginx/conf.d/server-common.conf.mixin;
@@ -22,6 +31,4 @@
                 proxy_pass {{ .Meta.maison_proxy }};
             }
         }
-        */}}
-    {{ end }}
-{{ end }}
+    */}}

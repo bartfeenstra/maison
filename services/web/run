@@ -11,20 +11,7 @@ done
 # Launch nginx.
 nginx -g 'daemon on;'
 
-# Obtain HTTPS certificates.
-certbot_args="--nginx -n --agree-tos --email bart@mynameisbart.com"
-for service in ${MAISON_WEB_SERVICES}; do
-    certbot_args="$certbot_args -d $service.$MAISON_WEB_DOMAIN"
-done
-# If HTTPS is not enabled explicitly, use dry runs and allow failures, as those may be caused by non-public domains
-# (*.local), which Let's Encrypt rejects.
-if [ "$MAISON_WEB_PROTOCOL" == 'https' ]; then
-    eval "certbot $certbot_args"
-else
-    eval "certbot certonly --dry-run $certbot_args" || true
-fi;
-
 # Launch Consul Template.
 consul-template -consul-addr="$MAISON_LOCAL_IP:8500" \
-    -template="/etc/nginx/conf.d/10-consul.conf.ctmpl:/etc/nginx/conf.d/10-consul.confz:nginx -s reload || true" \
+    -template="/etc/nginx/conf.d/10-consul.conf.ctmpl:/etc/nginx/conf.d/10-consul.confz:/maison/reload" \
     -log-level=debug
