@@ -3,18 +3,17 @@
 set -Eeuo pipefail
 
 # Reload nginx.
-nginx -s reload || true
+nginx -s reload
 
 # Obtain HTTPS certificates.
 certbot_args="--nginx -n --agree-tos --email bart@mynameisbart.com"
-# @todo Query Consul. DO we need jq for that?
-#for service in ${MAISON_WEB_SERVICES}; do
-#    certbot_args="$certbot_args -d $service.$MAISON_WEB_DOMAIN"
-#done
-## If HTTPS is not enabled explicitly, use dry runs and allow failures, as those may be caused by non-public domains
-## (*.local), which Let's Encrypt rejects.
-#if [ "$MAISON_WEB_PROTOCOL" == 'https' ]; then
-#    eval "certbot $certbot_args"
-#else
-#    eval "certbot certonly --dry-run $certbot_args" || true
-#fi;
+while read -r service; do
+    certbot_args="$certbot_args -d $service.$MAISON_WEB_DOMAIN"
+done < <(cat /maison/web-services | grep -E '.+')
+# If HTTPS is not enabled explicitly, use dry runs and allow failures, as those may be caused by non-public domains
+# (*.local), which Let's Encrypt rejects.
+if [ "$MAISON_WEB_PROTOCOL" == 'https' ]; then
+    eval "certbot $certbot_args"
+else
+    eval "certbot certonly --dry-run $certbot_args" || true
+fi;

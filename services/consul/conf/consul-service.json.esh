@@ -3,12 +3,12 @@
         "name": "consul",
         "tags": ["maison", "web"],
         "meta": {
-            "maison_proxy": "http://consul:8500",
+            "maison_proxy": "http://<%= $MAISON_LOCAL_IP %>:8500",
             "maison_auth": "basic"
         },
         "checks": [
             {
-                "http": "http://consul:8500",
+                "http": "http://<%= $MAISON_LOCAL_IP %>:8500",
                 "interval": "10s"
             }
         ]
