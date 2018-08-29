@@ -24,8 +24,7 @@ before_install:
 before_script:
   - ./bin/build-dev
   - ./bin/start
-  - ./bin/install
-  - ./bin/upgrade
+  - ./bin/migrate
 
 script:
   - ./bin/test
