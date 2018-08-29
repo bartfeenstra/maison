@@ -7,4 +7,5 @@ cd "$(dirname "$0")/.."
 
 # openHAB can take a long time to boot completely.
 ./bin/await maison_hab_1 8081 -t 60
+./vendor/bin/wait-for-it "hab.$MAISON_WEB_DOMAIN:80"
 curl --verbose -f --user "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME:$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD" "$MAISON_WEB_PROTOCOL://hab.$MAISON_WEB_DOMAIN" > /dev/null

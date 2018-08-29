@@ -6,4 +6,5 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
 ./bin/await maison_ola_1 9090
+./vendor/bin/wait-for-it "ola.$MAISON_WEB_DOMAIN:80"
 curl --verbose -f --user "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME:$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD" "$MAISON_WEB_PROTOCOL://ola.$MAISON_WEB_DOMAIN" > /dev/null
