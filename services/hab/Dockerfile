@@ -1,4 +1,4 @@
-FROM openhab/openhab:2.2.0-amd64-debian
+FROM openhab/openhab:2.3.0-amd64-debian
 
 RUN apt-get update && apt-get upgrade -y \
     && apt-get install -y gettext \
