@@ -1,3 +1,4 @@
+{{ range service "maison-web.oauth2|passing" }}
 location /_oauth2/auth {
     internal;
     proxy_pass http://oauth2:4180/oauth2/auth;
@@ -13,3 +14,4 @@ location /_oauth2/sign_in {
     # @todo Do this in the OAuth2 Proxy templates, and possibly contribute the fix upstream.
     sub_filter '"/oauth2/' '"<%= $MAISON_WEB_PROTOCOL %>://oauth2.<%= $MAISON_WEB_DOMAIN %>/oauth2/';
 }
+{{ end }}

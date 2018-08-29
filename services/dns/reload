@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cat /etc/hosts | sed -E "s/^.+\.$MAISON_WEB_DOMAIN\$//" > /etc/hosts
+while read -r service; do
+    echo "$MAISON_LOCAL_IP $service.$MAISON_WEB_DOMAIN" >> /etc/hosts
+done < <(cat /maison/web-services | grep -E '.+')

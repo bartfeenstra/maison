@@ -1,2 +1,4 @@
+{{ range service "maison-web.oauth2|passing" }}
 auth_request /_oauth2/auth;
 error_page 401 = /_oauth2/sign_in;
+{{ end }}

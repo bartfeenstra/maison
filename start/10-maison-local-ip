@@ -4,7 +4,7 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-. ./.env
+. ./run/.env
 
 # If no explicit local IP was given, export the bridge network's gateway as the local IP, so we advertise on this host
 # only.
@@ -12,8 +12,6 @@ if [ -z $MAISON_LOCAL_IP ]; then
     if ! docker network inspect maison_maison &>/dev/null; then
         docker network create maison_maison
     fi
-    export MAISON_LOCAL_IP
-    MAISON_LOCAL_IP=$(docker network inspect -f '{{range .IPAM.Config}}{{.Gateway}}{{end}}' maison_maison)
+    maison_local_ip=$(docker network inspect -f '{{range .IPAM.Config}}{{.Gateway}}{{end}}' maison_maison)
+    sed -Ei "s/^MAISON_LOCAL_IP=.*$/MAISON_LOCAL_IP=$maison_local_ip/" ./run/.env
 fi
-
-docker-compose -p maison up --scale ci-agent=2 -d

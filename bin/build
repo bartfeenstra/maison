@@ -10,8 +10,8 @@ if [ ! -d ./vendor/krab ]; then
     git clone https://github.com/bartfeenstra/krab.git ./vendor/krab
     chmod ugo+rx ./vendor/krab/bin/krab
 fi
-krab_tag='0.2'
-git -C ./vendor/krab tag --delete "$krab_tag"
+krab_tag='0.3'
+git -C ./vendor/krab tag --delete "$krab_tag" || true
 git -C ./vendor/krab fetch
 git -C ./vendor/krab checkout "$krab_tag"
 

@@ -2,6 +2,7 @@
 
 set -Eeuo pipefail
 
+mkdir -p /data/gitea/conf
 envsubst < /maison/app.ini.envtpl > /data/gitea/conf/app.ini
 
 chown "$(whoami):$(groups | awk '{ print $1 }')" -R /data

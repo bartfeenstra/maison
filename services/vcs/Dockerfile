@@ -1,4 +1,4 @@
-FROM gitea/gitea:1.4
+FROM gitea/gitea:1.5
 
 COPY ./conf/gitea/app.ini.envtpl /maison/app.ini.envtpl
 COPY ./run /maison/run

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# Consolidate the services' data directories into a single, top-level data directory.
 
 set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
+. ./run/.env
 . ./src/bash/maintenance
 
 install_app_db "$MAISON_AUTH_DB_NAME" "$MAISON_AUTH_DB_USERNAME" "$MAISON_AUTH_DB_PASSWORD"

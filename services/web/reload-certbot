@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+# Obtain HTTPS certificates.
+certbot_args="--nginx -n --agree-tos --email bart@mynameisbart.com"
+while read -r service; do
+    certbot_args="$certbot_args -d $service.$MAISON_WEB_DOMAIN"
+done < <(cat /maison/web-services | grep -E '.+')
+# If HTTPS is not enabled explicitly, use dry runs and allow failures, as those may be caused by non-public domains
+# (*.local), which Let's Encrypt rejects.
+if [ "$MAISON_WEB_PROTOCOL" == 'https' ]; then
+    eval "certbot $certbot_args"
+else
+    eval "certbot certonly --dry-run $certbot_args" || true
+fi;
