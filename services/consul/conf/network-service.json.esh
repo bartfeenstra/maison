@@ -8,7 +8,7 @@
             {
                 "http": "https://<%= $MAISON_LOCAL_IP %>:8443",
                 "tls_skip_verify": true,
-                "interval": "10s"
+                "interval": "2s"
             }
         ]
     }

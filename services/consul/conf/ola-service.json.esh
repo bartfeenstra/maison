@@ -8,7 +8,7 @@
         "checks": [
             {
                 "http": "http://<%= $container_ip %>:9090",
-                "interval": "10s"
+                "interval": "2s"
             }
         ]
     }
