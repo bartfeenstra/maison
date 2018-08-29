@@ -5,6 +5,8 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
+. ./src/bash/retry
+
 ./bin/await maison_ci_1 8000
 ./vendor/bin/wait-for-it "ci.$MAISON_WEB_DOMAIN:80"
-curl --verbose -f "$MAISON_WEB_PROTOCOL://ci.$MAISON_WEB_DOMAIN" > /dev/null
+retry 5 5 "curl --verbose -f $MAISON_WEB_PROTOCOL://ci.$MAISON_WEB_DOMAIN"

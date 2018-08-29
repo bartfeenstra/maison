@@ -6,10 +6,16 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
 . ./.env
+. ./src/bash/retry
+
+assert() {
+    service=$1
+    resolved_ip=$(docker exec maison_dns_1 getent hosts "$service.$MAISON_WEB_DOMAIN" | awk '{ print $1 }')
+    ip addr show | grep "$resolved_ip"
+}
 
 ./vendor/bin/wait-for-it localhost:5300
 web_services="ci consul vcs network ola hab"
 for service in $web_services; do
-    resolved_ip=$(docker exec maison_dns_1 getent hosts "$service.$MAISON_WEB_DOMAIN" | awk '{ print $1 }')
-    ip addr show | grep "$resolved_ip"
+    retry 5 5 "assert $service"
 done
