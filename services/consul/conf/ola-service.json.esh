@@ -2,11 +2,9 @@
 {
     "service": {
         "name": "ola",
-        "tags": ["maison", "web"],
-        "meta": {
-            "maison_proxy": "http://<%= $container_ip %>:9090",
-            "maison_auth": "basic"
-        },
+        "tags": ["maison-web", "maison-web-auth"],
+        "address": "<%= $container_ip %>",
+        "port": 9090,
         "checks": [
             {
                 "http": "http://<%= $container_ip %>:9090",

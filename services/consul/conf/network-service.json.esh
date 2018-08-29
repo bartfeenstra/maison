@@ -1,12 +1,9 @@
 {
     "service": {
         "name": "network",
-        "tags": ["maison", "web"],
+        "tags": ["maison-web", "maison-web-https", "maison-web-auth"],
+        "address": "<%= $MAISON_LOCAL_IP %>",
         "port": 8443,
-        "meta": {
-            "maison_proxy": "https://<%= $MAISON_LOCAL_IP %>:8443",
-            "maison_auth": "basic"
-        },
         "checks": [
             {
                 "http": "https://<%= $MAISON_LOCAL_IP %>:8443",

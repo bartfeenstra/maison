@@ -2,10 +2,9 @@
 {
     "service": {
         "name": "ci",
-        "tags": ["maison", "web"],
-        "meta": {
-            "maison_proxy": "http://<%= $container_ip %>:8000"
-        },
+        "tags": ["maison-web"],
+        "address": "<%= $container_ip %>",
+        "port": 8000,
         "checks": [
             {
                 "http": "http://<%= $container_ip %>:8000",

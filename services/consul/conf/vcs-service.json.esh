@@ -2,10 +2,9 @@
 {
     "service": {
         "name": "vcs",
-        "tags": ["maison", "web"],
-        "meta": {
-            "maison_proxy": "http://<%= $container_ip %>:3000"
-        },
+        "tags": ["maison-web"],
+        "address": "<%= $container_ip %>",
+        "port": 3000,
         "checks": [
             {
                 "http": "http://<%= $container_ip %>:3000",

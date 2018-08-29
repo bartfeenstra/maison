@@ -1,11 +1,9 @@
 {
     "service": {
         "name": "consul",
-        "tags": ["maison", "web"],
-        "meta": {
-            "maison_proxy": "http://<%= $MAISON_LOCAL_IP %>:8500",
-            "maison_auth": "basic"
-        },
+        "tags": ["maison-web", "maison-web-auth"],
+        "address": "<%= $MAISON_LOCAL_IP %>",
+        "port": 8500,
         "checks": [
             {
                 "http": "http://<%= $MAISON_LOCAL_IP %>:8500",

@@ -2,11 +2,9 @@
 {
     "service": {
         "name": "hab",
-        "tags": ["maison", "web"],
-        "meta": {
-            "maison_proxy": "http://<%= $container_ip %>:8081",
-            "maison_auth": "basic"
-        },
+        "tags": ["maison-web", "maison-web-auth"],
+        "address": "<%= $container_ip %>",
+        "port": 8081,
         "checks": [
             {
                 "http": "http://<%= $container_ip %>:8081",
