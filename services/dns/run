@@ -2,8 +2,9 @@
 
 set -Eeuo pipefail
 
-for service in ${MAISON_WEB_SERVICES}; do
-    echo "$MAISON_LOCAL_IP $service.$MAISON_WEB_DOMAIN" >> /etc/hosts
-done
+dnsmasq -u root
 
-dnsmasq -d
+# Launch Consul Template.
+consul-template -consul-addr="$MAISON_LOCAL_IP:8500" \
+    -template="/maison/web-services.ctmpl:/maison/web-services:/maison/reload" \
+    -log-level=debug

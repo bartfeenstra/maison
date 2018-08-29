@@ -8,7 +8,8 @@ cd "$(dirname "$0")/.."
 . ./.env
 
 ./vendor/bin/wait-for-it localhost:5300
-for service in ${MAISON_WEB_SERVICES}; do
+web_services="ci consul vcs network ola hab"
+for service in $web_services; do
     resolved_ip=$(docker exec maison_dns_1 getent hosts "$service.$MAISON_WEB_DOMAIN" | awk '{ print $1 }')
     ip addr show | grep "$resolved_ip"
 done

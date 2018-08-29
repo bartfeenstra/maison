@@ -1,0 +1,18 @@
+{
+    "service": {
+        "name": "network",
+        "tags": ["maison", "web"],
+        "port": 8443,
+        "meta": {
+            "maison_proxy": "https://<%= $MAISON_LOCAL_IP %>:8443",
+            "maison_auth": "basic"
+        },
+        "checks": [
+            {
+                "http": "https://<%= $MAISON_LOCAL_IP %>:8443",
+                "tls_skip_verify": true,
+                "interval": "10s"
+            }
+        ]
+    }
+}
