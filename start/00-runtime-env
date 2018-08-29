@@ -4,6 +4,5 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-rm -rf ./run
-
-docker-compose -p maison down --remove-orphans
+mkdir -p ./run
+cp ./.env ./run/.env

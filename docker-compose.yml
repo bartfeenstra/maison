@@ -1,5 +1,19 @@
 version: '3.4'
 services:
+  consul:
+    image: maison:consul
+    build: ./services/consul
+    restart: always
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+      - './data/services/consul:/consul/data'
+    network_mode: host
+    environment:
+      MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
+      MAISON_CONSUL_MASTER_ACL_TOKEN_UUID: '${MAISON_CONSUL_MASTER_ACL_TOKEN_UUID}'
+      MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID: '${MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID}'
   syslog:
     image: jumanjiman/rsyslog:latest
     restart: always
@@ -138,9 +152,7 @@ services:
       - '/etc/timezone:/etc/timezone:ro'
       - '/var/run/docker.sock:/var/run/docker.sock'
     networks:
-      maison:
-        aliases:
-          - ci
+      - maison
     environment:
       DRONE_SERVER: ci:9000
       DRONE_SECRET: '${MAISON_CI_DRONE_SECRET}'
@@ -175,15 +187,19 @@ services:
       maison:
         aliases:
           - web
+          # @todo How can we get rid of these explicitly defined aliases? Do we even need them?
           - 'network.${MAISON_WEB_DOMAIN}'
           - 'hab.${MAISON_WEB_DOMAIN}'
           - 'ola.${MAISON_WEB_DOMAIN}'
           - 'vcs.${MAISON_WEB_DOMAIN}'
           - 'ci.${MAISON_WEB_DOMAIN}'
     environment:
+      MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
-      MAISON_WEB_SERVICES: '${MAISON_WEB_SERVICES}'
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
+      CONSUL_TOKEN: '${MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID}'
+    depends_on:
+      - consul
   dns:
     image: maison:dns
     build: ./services/dns
@@ -199,8 +215,8 @@ services:
         aliases:
           - dns
     environment:
-      MAISON_WEB_SERVICES: '${MAISON_WEB_SERVICES}'
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
       MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
+      CONSUL_TOKEN: '${MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID}'
 networks:
   maison:

@@ -12,7 +12,7 @@ fi
 if [ ! -f ./.env ]; then
     ./bin/build
 fi
-. .env
+. ./run/.env
 
 function install_app_db {
     local db_name=$1
@@ -44,6 +44,10 @@ install_vcs_user "$MAISON_VCS_ADMIN_USERNAME" "$MAISON_VCS_ADMIN_PASSWORD" "$MAI
 # Drone.
 install_app_db "$MAISON_CI_DB_NAME" "$MAISON_CI_DB_USERNAME" "$MAISON_CI_DB_PASSWORD"
 install_vcs_user "$MAISON_CI_GITEA_USERNAME" "$MAISON_CI_GITEA_PASSWORD" "$MAISON_CI_GITEA_EMAIL" --admin
+
+# Consul
+status=$(curl --silent --output /dev/stderr --write-out "%{http_code}" -H "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" -X PUT -d "{\"ID\":\"$MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID\",\"Name\":\"Consul Template\",\"Type\":\"client\",\"Rules\":\"service \\\"\\\" { policy = \\\"read\\\" } node \\\"\\\" { policy = \\\"read\\\"}\"}" "http://$MAISON_LOCAL_IP:8500/v1/acl/create" || true)
+test "$status" -eq 200
 
 # Persist the currently installed version.
 ./vendor/krab/bin/krab migrate-install ./data/.krab ./migrations

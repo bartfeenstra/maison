@@ -1,0 +1,5 @@
+{{ range services }}
+{{ range service (print "maison-web." .Name "|passing") }}
+{{ .Name }}
+{{ end }}
+{{ end }}
