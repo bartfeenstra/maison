@@ -13,6 +13,6 @@ nginx -g 'daemon on;'
 
 # Launch Consul Template.
 consul-template -consul-addr="$MAISON_LOCAL_IP:8500" \
-    -template="/maison/web-services.ctmpl:/maison/web-services" \
-    -template="/etc/nginx/conf.d/10-consul.conf.ctmpl:/etc/nginx/conf.d/10-consul.conf:/maison/reload" \
+    -template="/maison/web-services.ctmpl:/maison/web-services:/maison/reload-certbot" \
+    -template="/etc/nginx/conf.d/10-consul.conf.ctmpl:/etc/nginx/conf.d/10-consul.conf:/maison/reload-nginx" \
     -log-level=debug

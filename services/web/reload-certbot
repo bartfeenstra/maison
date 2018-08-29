@@ -2,9 +2,6 @@
 
 set -Eeuo pipefail
 
-# Reload nginx.
-nginx -s reload
-
 # Obtain HTTPS certificates.
 certbot_args="--nginx -n --agree-tos --email bart@mynameisbart.com"
 while read -r service; do

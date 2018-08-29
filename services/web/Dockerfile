@@ -13,8 +13,9 @@ COPY ./conf/nginx.conf /etc/nginx/
 COPY ./conf/conf.d/* /etc/nginx/conf.d/
 COPY ./run /maison/run
 COPY ./conf/web-services.ctmpl /maison/web-services.ctmpl
-COPY ./reload /maison/reload
-RUN chmod ug+rx /maison/run /maison/reload
+COPY ./reload-certbot /maison/reload-certbot
+COPY ./reload-nginx /maison/reload-nginx
+RUN chmod ug+rx /maison/run /maison/reload-certbot /maison/reload-nginx
 
 CMD ["/maison/run"]
 
