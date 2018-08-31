@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 
-set -Eeuo pipefail
+set -Eeumo pipefail
 
 esh -o /opt/jboss/.keycloak/kcadm.config /opt/jboss/.keycloak/kcadm.config.esh
 
-#kcadm.sh config credentials --server "http://oauth2.$MAISON_WEB_DOMAIN" --realm Maison --user "$MAISON_AUTH_ADMIN_USERNAME" --password "$MAISON_AUTH_ADMIN_PASSWORD"
-kcadm.sh config credentials --server "http://localhost:8080" --realm Maison --user "$MAISON_AUTH_ADMIN_USERNAME" --password "$MAISON_AUTH_ADMIN_PASSWORD"
+/opt/jboss/docker-entrypoint.sh -b 0.0.0.0 \
+ -Djboss.bind.address=0.0.0.0 \
+ -Djboss.bind.address.management=0.0.0.0 &
 
-/opt/jboss/docker-entrypoint.sh -b 0.0.0.0
+wait-for-it 0.0.0.0:9990
+kcadm.sh config credentials --server "http://localhost:9990" --realm Maison --user "$MAISON_AUTH_ADMIN_USERNAME" --password "$MAISON_AUTH_ADMIN_PASSWORD"
+
+fg

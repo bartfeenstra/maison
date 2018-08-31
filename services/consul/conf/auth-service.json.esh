@@ -4,10 +4,10 @@
         "name": "auth",
         "tags": ["maison-web"],
         "address": "<%= $container_ip %>",
-        "port": 8080,
+        "port": 9990,
         "checks": [
             {
-                "http": "http://<%= $container_ip %>:8080",
+                "http": "http://<%= $container_ip %>:9990",
                 "interval": "2s"
             }
         ]
