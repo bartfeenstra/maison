@@ -2,10 +2,6 @@
 
 set -Eeuo pipefail
 
-# Parse ESH templates.
-templates=(/consul/config/*.json.esh)
-for template in "${templates[@]}"; do
-    esh -o "${template::-4}" "$template"
-done
+esh -o "/consul/config/consul.json" "/consul/config/consul.json.esh"
 
 consul agent -config-dir=/consul/config

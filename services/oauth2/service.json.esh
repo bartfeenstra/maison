@@ -1,0 +1,11 @@
+<% container_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' maison_oauth2_1) %>
+{
+    "Name": "oauth2",
+    "Tags": ["maison-web"],
+    "Address": "<%= $container_ip %>",
+    "Port": 4180,
+    "Check": {
+        "HTTP": "http://<%= $container_ip %>:4180",
+        "Interval": "2s"
+    }
+}

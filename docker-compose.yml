@@ -52,18 +52,12 @@ services:
         aliases:
           - auth
     environment:
-      DB_VENDOR: mariadb
-      DB_ADDR: db
-      DB_PORT: 3306
       DB_DATABASE: '${MAISON_AUTH_DB_NAME}'
       DB_USER: '${MAISON_AUTH_DB_USERNAME}'
       DB_PASSWORD: '${MAISON_AUTH_DB_PASSWORD}'
       KEYCLOAK_USER: '${MAISON_AUTH_ADMIN_USERNAME}'
       KEYCLOAK_PASSWORD: '${MAISON_AUTH_ADMIN_PASSWORD}'
       PROXY_ADDRESS_FORWARDING: 'true'
-      MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
-      MAISON_AUTH_ADMIN_USERNAME: '${MAISON_AUTH_ADMIN_USERNAME}'
-      MAISON_AUTH_ADMIN_PASSWORD: '${MAISON_AUTH_ADMIN_PASSWORD}'
     depends_on:
       - db
   mailer:

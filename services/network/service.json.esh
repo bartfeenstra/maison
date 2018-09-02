@@ -1,0 +1,11 @@
+{
+    "Name": "network",
+    "Tags": ["maison-web", "maison-web-https", "maison-web-auth"],
+    "Address": "<%= $MAISON_LOCAL_IP %>",
+    "Port": 8443,
+    "Check": {
+        "HTTP": "https://<%= $MAISON_LOCAL_IP %>:8443",
+        "TLSSkipVerify": true,
+        "Interval": "2s"
+    }
+}
