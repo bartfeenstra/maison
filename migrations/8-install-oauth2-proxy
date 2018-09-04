@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+. ./src/bash/maintenance
+
+# @todo Create a client for OAuth2 access using `kcadm.sh create clients ...`.
+# @todo To this client, add one permission per web service.
+# @todo Then, find out how to assign these to roles, and then , I guess, roles to users?
+# @todo
+# @todo
+# @todo To perform auth, we let oauth2_proxy merely validate JWT tokens, or trigger logins.
+# @todo Try to write a bit of Lua for nginx to confirm a JWT contains a given claim.
+# @todo These two checks (oauth2_proxy & Lua) combined allow access.
+# @todo This way access rules are moved to Lua, because oauth2_proxy does not support them.
+# @todo
+# @todo
+# @todo
+kcadm_init
+./vendor/bin/esh ./services/oauth2/conf/keycloak-service.json.esh | docker exec -i maison_auth_1 bash -c "cat | kcadm.sh create clients -r master -f - -s secret=$MAISON_OAUTH2_AUTH_CLIENT_SECRET_UUID"
+# @todo Create claims/scopes/roles/permissions for each web app.
+# @todo Since we are on the host, just find all services's Consul service.json.esh files, parse them, then filter them with jq to get all web apps.
+# @todo For all web apps, regardless of their Consul service status, ensure these permissions exist. See https://stackoverflow.com/questions/26701538/how-to-filter-an-array-of-objects-based-on-values-in-an-inner-array-with-jq#26701851.
+# @todo

@@ -6,6 +6,7 @@ retry() {
     attempts=$1
     delay=$2
     command=$3
+    ./vendor/krab/bin/krab stdio-inform "Attempting '$command' at most $attempts times at $delay-second intervals."
     while [ "$attempts" -gt 0 ]; do
         attempts=$(( attempts - 1 ))
         if $command; then

@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+. ./run/.env
+. ./src/bash/retry
+
+./vendor/krab/bin/krab stdio-inform 'Watching services. Press ctrl + C to stop Maison.'
+address="$MAISON_LOCAL_IP:8500"
+api_root="http://$address/v1"
+while read -r service; do
+    echo "$service"
+    echo "$service"
+    echo "$service"
+    ./vendor/krab/bin/krab stdio-state "Service '$service' has restarted."
+    if [ ! -f "./services/$service/service.json.esh" ]; then
+        ./vendor/krab/bin/krab stdio-state "Not (re-)registering service '$service' because it has no service definition."
+        continue
+    fi
+    ./vendor/krab/bin/krab stdio-confirm "(Re-)registering service '$service'."
+    retry 9 5 './bin/await maison_consul_1 8500'
+    definition=$(mktemp)
+    ./vendor/bin/esh -o "$definition" "./services/$service/service.json.esh"
+    curl -f -X PUT --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" --header "Content-Type: application/json" --data "@$definition" "$api_root/agent/service/register"
+    curl -f -X PUT --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" "$api_root/agent/reload"
+done < <(docker events --format '{{ json . }}' --filter type=container --filter event=start | jq -r --unbuffered 'if .Actor.Attributes["com.docker.compose.project"] == "maison" then .Actor.Attributes["com.docker.compose.service"] else "" end')
+
+
+
+#./vendor/krab/bin/krab stdio-inform 'Watching services. Press ctrl + C to stop Maison.'
+#address="$MAISON_LOCAL_IP:8500"
+#api_root="http://$address/v1"
+#./vendor/bin/wait-for-it "$address"
+#retry 5 5 "curl -f --header 'X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID' $api_root/agent/metrics"
+#while true; do
+#    reload=false
+#    while read -r service; do
+#        if [ ! -f "./services/$service/service.json.esh" ]; then
+#            continue
+#        fi
+#        ./vendor/krab/bin/krab stdio-inform "Re-registering service '$service' because it has (re)started."
+#        reload=true
+#        definition=$(mktemp)
+#        ./vendor/bin/esh -o "$definition" "./services/$service/service.json.esh"
+#        curl -f -X PUT --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" --header "Content-Type: application/json" --data "@$definition" "$api_root/agent/service/register"
+#    done < <(docker container ls --format '{{ json . }}' | jq -r '.Labels' | grep 'com.docker.compose.project=maison' | sed -E 's/^.*com\.docker\.compose\.service=([^,]*)(,.+|$)/\1/g')
+#    if $reload; then
+#        curl -f -X PUT --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" "$api_root/agent/reload"
+#    fi
+#    sleep 1
+#done

@@ -19,7 +19,7 @@ redirect_url = "http://oauth2.<%= $MAISON_WEB_DOMAIN %>/oauth2/callback"
 # upstreams = [
 #     "http://127.0.0.1:8080/"
 # ]
-upstreams = ["https://example.com"]
+upstreams = []
 
 ## Log requests to stdout
 # request_logging = true
@@ -41,7 +41,7 @@ email_domains = "*"
 
 ## The OAuth Client ID, Secret
 # client_id = "123456.apps.googleusercontent.com"
-client_id = "oauth2"
+client_id = "maison-oauth2"
 # client_secret = ""
 client_secret = "<%= $MAISON_OAUTH2_CLIENT_SECRET %>"
 
@@ -97,4 +97,4 @@ cookie_secure = false
 
 ## Provider
 provider = "oidc"
-oidc_issuer_url = "http://auth.<%= $MAISON_WEB_DOMAIN %>/auth/realms/Maison"
+oidc_issuer_url = "http://auth.<%= $MAISON_WEB_DOMAIN %>/auth/realms/master"
