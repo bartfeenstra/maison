@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+while read -r log; do
+    read event service <<< "$log"
+    if [ "$event" == 'start' ]; then
+        /maison/register "$service"
+    elif [ "$event" == 'stop' ]; then
+        /maison/deregister "$service"
+    fi
+done < <(docker events --format '{{ .Action }} {{ .Actor.Attributes.name  }}' --filter type=container --filter event=stop --filter event=start)

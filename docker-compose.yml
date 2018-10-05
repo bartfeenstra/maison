@@ -4,16 +4,31 @@ services:
     image: maison:consul
     build: ./services/consul
     restart: always
+    labels:
+      maison.service.port: 8500
+      maison.service.tags: 'maison-web'
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - '/var/run/docker.sock:/var/run/docker.sock'
       - './data/services/consul:/consul/data'
     network_mode: host
     environment:
       MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
       MAISON_CONSUL_MASTER_ACL_TOKEN_UUID: '${MAISON_CONSUL_MASTER_ACL_TOKEN_UUID}'
       MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID: '${MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID}'
+  registrator:
+    image: maison:registrator
+    build: ./services/registrator
+    restart: always
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+    networks:
+      - maison
+    environment:
+      MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
+      MAISON_CONSUL_MASTER_ACL_TOKEN_UUID: '${MAISON_CONSUL_MASTER_ACL_TOKEN_UUID}'
+    depends_on:
+      - consul
   syslog:
     image: jumanjiman/rsyslog:latest
     restart: always
@@ -24,9 +39,13 @@ services:
       maison:
         aliases:
           - syslog
+    depends_on:
+      - registrator
   db:
     image: 'mariadb:10.1'
     restart: always
+    labels:
+      maison.service.port: 3306
     ports:
      - '3306:3306'
     volumes:
@@ -40,10 +59,15 @@ services:
           - db
     environment:
       MYSQL_ROOT_PASSWORD: '${MAISON_DB_ROOT_PASSWORD}'
+    depends_on:
+      - registrator
   auth:
     image: 'maison:auth'
     build: ./services/auth
     restart: always
+    labels:
+      maison.service.port: 8080
+      maison.service.tags: 'maison-web'
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -59,11 +83,14 @@ services:
       KEYCLOAK_PASSWORD: '${MAISON_AUTH_ADMIN_PASSWORD}'
       PROXY_ADDRESS_FORWARDING: 'true'
     depends_on:
+      - registrator
       - db
   mailer:
     image: maison:mailer
     build: ./services/mailer
     restart: always
+    labels:
+      maison.service.port: 25
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -73,10 +100,15 @@ services:
           - mailer
     environment:
       MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
+    depends_on:
+      - registrator
   hab:
     image: maison:hab
     build: ./services/hab
     restart: always
+    labels:
+      maison.service.port: 8081
+      maison.service.tags: 'maison-web,maison-web-auth'
     tty: true
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
@@ -94,11 +126,15 @@ services:
       MAISON_HAB_DB_USERNAME: '${MAISON_HAB_DB_USERNAME}'
       MAISON_HAB_DB_PASSWORD: '${MAISON_HAB_DB_PASSWORD}'
     depends_on:
+      - registrator
       - db
       - ola
   ola:
     image: bartfeenstra/ola:0.1
     restart: always
+    labels:
+      maison.service.port: 9090
+      maison.service.tags: 'maison-web,maison-web-auth'
     expose:
      - '9010'
      - '9090'
@@ -112,10 +148,15 @@ services:
     # The FTDI USB device we need can be (un)mounted at any time, and as any /dev/ttyUSB* device. Because we trust this
     # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
     privileged: true
+    depends_on:
+      - registrator
   vcs:
     image: maison:vcs
     build: ./services/vcs
     restart: always
+    labels:
+      maison.service.port: 3000
+      maison.service.tags: 'maison-web'
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -134,12 +175,16 @@ services:
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
       MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
     depends_on:
+      - registrator
       - auth
       - db
       - mailer
   ci:
     image: 'drone/drone:0.8'
     restart: always
+    labels:
+      maison.service.port: 8000
+      maison.service.tags: 'maison-web'
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -162,6 +207,7 @@ services:
       DRONE_DATABASE_DATASOURCE: '${MAISON_CI_DB_USERNAME}:${MAISON_CI_DB_PASSWORD}@tcp(db:3306)/${MAISON_CI_DB_NAME}?parseTime=true'
       GIN_MODE: release
     depends_on:
+      - registrator
       - db
       - vcs
   ci-agent:
@@ -178,10 +224,14 @@ services:
       DRONE_SERVER: ci:9000
       DRONE_SECRET: '${MAISON_CI_DRONE_SECRET}'
     depends_on:
+      - registrator
       - ci
   network:
     image: 'jacobalberty/unifi:5.7'
     restart: always
+    labels:
+      maison.service.port: 8500
+      maison.service.tags: 'maison-web'
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -189,6 +239,8 @@ services:
     network_mode: host
     environment:
       RUNAS_UID0: 'false'
+    depends_on:
+      - registrator
   web:
     image: maison:web
     build: ./services/web
@@ -221,11 +273,15 @@ services:
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
       CONSUL_TOKEN: '${MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID}'
     depends_on:
+      - registrator
       - consul
   oauth2:
     image: maison:oauth2
     build: ./services/oauth2
     restart: always
+    labels:
+      maison.service.port: 4180
+      maison.service.tags: 'maison-web'
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -239,11 +295,14 @@ services:
       MAISON_OAUTH2_CLIENT_SECRET: '${MAISON_OAUTH2_CLIENT_SECRET}'
       MAISON_OAUTH2_COOKIE_SECRET: '${MAISON_OAUTH2_COOKIE_SECRET}'
     depends_on:
+      - registrator
       - auth
   dns:
     image: maison:dns
     build: ./services/dns
     restart: always
+    labels:
+      maison.service.port: 5300
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
@@ -258,5 +317,7 @@ services:
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
       MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
       CONSUL_TOKEN: '${MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID}'
+    depends_on:
+      - registrator
 networks:
   maison:
