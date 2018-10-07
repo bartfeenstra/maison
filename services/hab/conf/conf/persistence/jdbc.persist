@@ -1,9 +1,0 @@
-Strategies
-{
-	default = everyChange
-}
-
-Items
-{
-	*: strategy = everyChange, restoreOnStartup
-}

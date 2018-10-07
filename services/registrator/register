@@ -11,25 +11,16 @@ api_root="http://$address/v1"
 
 # Get information on the given container.
 container_info=$(docker inspect --format '{{ json . }}' "$container_id")
-container_project=$(echo "$container_info" | jq -r 'if .Config.Labels | has("com.docker.compose.project") then .Config.Labels["com.docker.compose.project"] else "" end')
+container_project=$(echo "$container_info" | jq -r '.Config.Labels["com.docker.compose.project"] // ""')
 
 # Skip containers we do not wish to register.
 if [ "$container_project" != "maison" ]; then
-    exit 0
-fi
-# @todo This can be problematic. What if a container starts but isn't fully running yet once it reaches this code?
-if [ "$(echo "$container_info" | jq -r '.State.Status')" != 'running' ]; then
     exit 0
 fi
 
 # Register the service.
 definition=$(mktemp)
 echo "$container_info"| jq "$(cat /maison/service.json.jq)" > "$definition"
-curl -fv -X PUT --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" --header "Content-Type: application/json" --data "@$definition" "$api_root/agent/service/register" || cat "$definition" && exit 3
+curl -f -X PUT --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" --header "Content-Type: application/json" --data "@$definition" "$api_root/agent/service/register"
 curl -f -X PUT --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" "$api_root/agent/reload"
-# @todo Delete this
-curl -f --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" -o - "$api_root/agent/services"
-echo NEMAN
-echo NEMAN
-echo NEMAN
 rm "$definition"

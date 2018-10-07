@@ -8,7 +8,7 @@ setUp() {
 
 test_upgrade() {
     rsync -ra --exclude='.git' --exclude='data/*' ./ "$maison_root"
-    services="db dns hab network vcs web"
+    services="db dns web"
     for service in $services; do
         mkdir -p "$maison_root/services/$service/data"
         echo "$service" | rev > "$maison_root/services/$service/data/some-data"

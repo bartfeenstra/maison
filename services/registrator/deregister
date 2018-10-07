@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+container_id="$1"
+
+address="$MAISON_LOCAL_IP:8500"
+api_root="http://$address/v1"
+
+# Skip containers we do not wish to deregister.
+container_project=$(docker inspect --format '{{ json . }}' "$container_id" | jq -r '.Config.Labels["com.docker.compose.project"] // ""')
+if [ "$container_project" != "maison" ]; then
+    exit 0
+fi
+
+# Deregister the service.
+curl -f -X PUT --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" "$api_root/agent/service/deregister/$service"

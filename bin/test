@@ -8,22 +8,22 @@ cd "$(dirname "$0")/.."
 
 . ./src/bash/maintenance
 
-tearDown() {
-    if [ ! -z "$MAISON_TEST_WEB_AUTH_USER_ID" ]; then
-        docker exec maison_auth_1 kcadm.sh delete "users/$MAISON_TEST_WEB_AUTH_USER_ID"
-    fi
-}
-
 # Prepare the test environment.
 set -a
 . ./run/.env
-MAISON_TEST_WEB_AUTH_USERNAME=maisontests
+MAISON_TEST_WEB_AUTH_USERNAME=maisontest
 MAISON_TEST_WEB_AUTH_PASSWORD=bienvenue
 set +a
-MAISON_TEST_WEB_AUTH_USER_ID=
-kcadm_init
-# @todo How to set the user's password?
-MAISON_TEST_WEB_AUTH_USER_ID=$(docker exec maison_auth_1 kcadm.sh create users -r master -s "username=$MAISON_TEST_WEB_AUTH_USERNAME" -i)
-exit 2
-find ./tests -type f -name '*-test' -print0 | sort -z | xargs -0 ./vendor/krab/bin/krab run -l
 
+tearDown() {
+    local user_id
+    user_id=$(docker exec maison_auth_1 kcadm.sh get users -q "username=$MAISON_TEST_WEB_AUTH_USERNAME" -l 1 | jq -r '.[].id')
+    if [ ! -z "$user_id" ]; then
+        docker exec maison_auth_1 kcadm.sh delete "users/$user_id"
+    fi
+}
+
+kcadm_init
+docker exec maison_auth_1 kcadm.sh create users -r master -s "username=$MAISON_TEST_WEB_AUTH_USERNAME"
+docker exec maison_auth_1 kcadm.sh set-password --username "$MAISON_TEST_WEB_AUTH_USERNAME" -p "$MAISON_TEST_WEB_AUTH_PASSWORD"
+find ./tests -type f -name '*-test' -print0 | sort -z | xargs -0 ./vendor/krab/bin/krab run -l

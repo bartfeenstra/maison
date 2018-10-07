@@ -6,17 +6,5 @@
 /data/*
 /run
 
-### openHAB
-# We commit the *.envtpl file instead.
-/services/hab/conf/conf/services/jdbc.cfg
-
-### VCS
-!/data/vcs
-/data/vcs/*
-/data/vcs/gitea/*
-!/data/vcs/gitea/conf
-# We commit the *.envtpl file instead.
-/services/vcs/conf/gitea/app.ini
-
 # Global rules.
 !.gitkeep

@@ -11,12 +11,7 @@ addons:
     - apache2-utils
     - shellcheck
   hosts:
-    - ci.maison
     - consul.maison
-    - vcs.maison
-    - network.maison
-    - ola.maison
-    - hab.maison
 
 before_install:
   - sudo /etc/init.d/mysql stop

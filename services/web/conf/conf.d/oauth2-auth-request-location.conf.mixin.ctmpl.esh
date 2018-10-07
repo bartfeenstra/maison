@@ -3,6 +3,7 @@ location /_oauth2/auth {
     internal;
     proxy_pass http://oauth2:4180/oauth2/auth;
     proxy_pass_request_body off;
+    proxy_set_header Host "<%= $MAISON_WEB_DOMAIN %>";
     proxy_set_header Content-Length "";
     proxy_set_header X-Original-URI $request_uri;
 }
@@ -10,6 +11,7 @@ location /_oauth2/auth {
 location /_oauth2/sign_in {
     internal;
     proxy_pass http://oauth2:4180/oauth2/sign_in;
+    proxy_set_header Host "<%= $MAISON_WEB_DOMAIN %>";
     # Make HTML attributes containing URLs absolute, because these pages are displayed behind multiple proxies.
     # @todo Do this in the OAuth2 Proxy templates, and possibly contribute the fix upstream.
     sub_filter '"/oauth2/' '"<%= $MAISON_WEB_PROTOCOL %>://oauth2.<%= $MAISON_WEB_DOMAIN %>/oauth2/';
