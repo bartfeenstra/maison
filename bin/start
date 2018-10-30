@@ -12,3 +12,5 @@ set -a
 set +a
 
 find ./start -type f -print0 | sort -z | xargs -0 ./vendor/krab/bin/krab run
+
+./bin/migrate

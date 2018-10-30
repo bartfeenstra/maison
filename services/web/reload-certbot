@@ -9,7 +9,7 @@ while read -r service; do
 done < <(cat /maison/web-services | grep -E '.+')
 # If HTTPS is not enabled explicitly, use dry runs and allow failures, as those may be caused by non-public domains
 # (*.local), which Let's Encrypt rejects.
-if [ "$MAISON_WEB_PROTOCOL" == 'https' ]; then
+if [ "$MAISON_WEB_PROTOCOL" = 'https' ]; then
     eval "certbot $certbot_args"
 else
     eval "certbot certonly --dry-run $certbot_args" || true

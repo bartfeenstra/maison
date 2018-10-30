@@ -7,19 +7,37 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-      - '/var/run/docker.sock:/var/run/docker.sock'
       - './data/services/consul:/consul/data'
     network_mode: host
     environment:
       MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
       MAISON_CONSUL_MASTER_ACL_TOKEN_UUID: '${MAISON_CONSUL_MASTER_ACL_TOKEN_UUID}'
       MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID: '${MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID}'
+      SERVICE_8500_NAME: consul
+      SERVICE_8500_TAGS: 'maison-web,maison-web-auth'
+      SERVICE_8500_CHECK_HTTP: '/'
+  registrator:
+    image: gliderlabs/registrator:latest
+    restart: always
+    command: '-internal=true -cleanup=true -deregister=always -resync=1 consul://${MAISON_LOCAL_IP}:8500'
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '/etc/timezone:/etc/timezone:ro'
+      - '/var/run/docker.sock:/tmp/docker.sock'
+    environment:
+      MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
+      MAISON_CONSUL_MASTER_ACL_TOKEN_UUID: '${MAISON_CONSUL_MASTER_ACL_TOKEN_UUID}'
+    depends_on:
+      - consul
   syslog:
     image: jumanjiman/rsyslog:latest
     restart: always
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
+    environment:
+      SERVICE_514_NAME: 'syslog'
+      SERVICE_514_CHECK_TCP: 'true'
     networks:
       maison:
         aliases:
@@ -40,6 +58,8 @@ services:
           - db
     environment:
       MYSQL_ROOT_PASSWORD: '${MAISON_DB_ROOT_PASSWORD}'
+      SERVICE_3306_NAME: db
+      SERVICE_3306_CHECK_TCP: 'true'
   mailer:
     image: maison:mailer
     build: ./services/mailer
@@ -53,6 +73,8 @@ services:
           - mailer
     environment:
       MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
+      SERVICE_25_NAME: mailer
+      SERVICE_25_CHECK_TCP: 'true'
   hab:
     image: maison:hab
     build: ./services/hab
@@ -69,19 +91,20 @@ services:
         aliases:
           - hab
     environment:
-      OPENHAB_HTTP_PORT: '8081'
       MAISON_HAB_DB_NAME: '${MAISON_HAB_DB_NAME}'
       MAISON_HAB_DB_USERNAME: '${MAISON_HAB_DB_USERNAME}'
       MAISON_HAB_DB_PASSWORD: '${MAISON_HAB_DB_PASSWORD}'
+      SERVICE_8080_NAME: hab
+      SERVICE_8080_TAGS: 'maison-web,maison-web-auth'
+      SERVICE_5007_IGNORE: 'true'
+      SERVICE_8101_IGNORE: 'true'
+      SERVICE_8443_IGNORE: 'true'
     depends_on:
       - db
       - ola
   ola:
     image: bartfeenstra/ola:0.1
     restart: always
-    expose:
-     - '9010'
-     - '9090'
     networks:
       maison:
         aliases:
@@ -89,6 +112,10 @@ services:
     environment:
       OLA_PLUGIN_E131: 1
       OLA_PLUGIN_FTDIDMX: 1
+      SERVICE_9010_IGNORE: 'true'
+      SERVICE_9090_NAME: ola
+      SERVICE_9090_TAGS: 'maison-web,maison-web-auth'
+      SERVICE_9090_CHECK_HTTP: '/'
     # The FTDI USB device we need can be (un)mounted at any time, and as any /dev/ttyUSB* device. Because we trust this
     # container, we run it in privileged mode and allow access to any device, so we can choose the right one runtime.
     privileged: true
@@ -102,7 +129,7 @@ services:
       - './data/services/vcs:/data'
       - './services/vcs/conf/gitea:/data/gitea/conf'
     ports:
-      - '222:222'
+      - '222:22'
     networks:
       maison:
         aliases:
@@ -114,6 +141,11 @@ services:
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
       MAISON_MAILER_DOMAIN: '${MAISON_MAILER_DOMAIN}'
+      SERVICE_3000_NAME: 'vcs'
+      SERVICE_3000_TAGS: 'maison-web'
+      SERVICE_3000_CHECK_TCP: 'true'
+      SERVICE_222_NAME: 'vcs-ssh'
+      SERVICE_222_CHECK_TCP: 'true'
     depends_on:
       - db
   ci:
@@ -122,8 +154,6 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '/etc/timezone:/etc/timezone:ro'
-    ports:
-      - '9000'
     networks:
       maison:
         aliases:
@@ -140,6 +170,12 @@ services:
       DRONE_DATABASE_DRIVER: mysql
       DRONE_DATABASE_DATASOURCE: '${MAISON_CI_DB_USERNAME}:${MAISON_CI_DB_PASSWORD}@tcp(db:3306)/${MAISON_CI_DB_NAME}?parseTime=true'
       GIN_MODE: release
+      SERVICE_8000_NAME: ci
+      SERVICE_8000_TAGS: 'maison-web'
+      SERVICE_8000_CHECK_HTTP: '/'
+      SERVICE_443_IGNORE: 'true'
+      SERVICE_80_IGNORE: 'true'
+      SERVICE_9000_IGNORE: 'true'
     depends_on:
       - db
       - vcs
@@ -156,6 +192,7 @@ services:
     environment:
       DRONE_SERVER: ci:9000
       DRONE_SECRET: '${MAISON_CI_DRONE_SECRET}'
+      SERVICE_3000_IGNORE: 'true'
     depends_on:
       - ci
   network:
@@ -168,6 +205,9 @@ services:
     network_mode: host
     environment:
       RUNAS_UID0: 'false'
+      SERVICE_8443_NAME: network
+      SERVICE_8443_TAGS: 'maison-web,maison-web-auth,maison-web-https'
+      SERVICE_8443_CHECK_HTTPS: '/'
   web:
     image: maison:web
     build: ./services/web
@@ -177,9 +217,6 @@ services:
       - '/etc/timezone:/etc/timezone:ro'
       - './data/services/web/htpasswd:/etc/nginx/htpasswd'
       - './data/services/web/letsencrypt:/etc/letsencrypt'
-    expose:
-     - '80'
-     - '443'
     ports:
      - '80:80'
      - '443:443'
@@ -198,6 +235,9 @@ services:
       MAISON_WEB_PROTOCOL: '${MAISON_WEB_PROTOCOL}'
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
       CONSUL_TOKEN: '${MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID}'
+      SERVICE_80_NAME: http
+      SERVICE_80_CHECK_TCP: 'true'
+      SERVICE_443_IGNORE: 'true'
     depends_on:
       - consul
   dns:
@@ -218,5 +258,7 @@ services:
       MAISON_WEB_DOMAIN: '${MAISON_WEB_DOMAIN}'
       MAISON_LOCAL_IP: '${MAISON_LOCAL_IP}'
       CONSUL_TOKEN: '${MAISON_CONSUL_TEMPLATE_ACL_TOKEN_UUID}'
+      SERVICE_53_NAME: 'dns'
+      SERVICE_53_CHECK_TCP: 'true'
 networks:
   maison:
