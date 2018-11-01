@@ -1,0 +1,16 @@
+{{ range services }}
+    {{ range service (print "maison-web." .Name "|passing") }}
+        server {
+            server_name {{ .Name }}.<%= $MAISON_WEB_DOMAIN %>;
+            include /etc/nginx/conf.d/server-common.conf.mixin;
+
+            location / {
+                {{ if .Tags | contains "maison-web-auth" }}
+                include /etc/nginx/conf.d/location-auth.conf.mixin;
+                {{ end }}
+                include /etc/nginx/conf.d/location-proxy-common.conf.mixin;
+                proxy_pass {{ if .Tags | contains "maison-web-https" }}https{{ else }}http{{ end }}://{{ .Address }}:{{ .Port }};
+            }
+        }
+    {{ end }}
+{{ end }}

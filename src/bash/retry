@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+retry() {
+    attempts=$1
+    delay=$2
+    command=$3
+    while [ "$attempts" -gt 0 ]; do
+        attempts=$(( attempts - 1 ))
+        if $command; then
+            break
+        elif [ "$attempts" -gt 0 ]; then
+            sleep "$delay"
+        else
+            exit 1
+        fi
+    done
+}

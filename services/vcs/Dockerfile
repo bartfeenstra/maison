@@ -1,4 +1,4 @@
-FROM gitea/gitea:1.4
+FROM gitea/gitea:1.5
 
 COPY ./run /maison/run
 

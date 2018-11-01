@@ -7,4 +7,6 @@ for template in $templates; do
     envsubst < $template.envtpl > $template
 done
 
+chown "$(whoami):$(groups | awk '{ print $1 }')" -R /data
+
 /usr/bin/entrypoint "$@"

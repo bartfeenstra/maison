@@ -4,6 +4,7 @@
 ### Instance-specific files and directories.
 /.env
 /data/*
+/run
 
 ### openHAB
 # We commit the *.envtpl file instead.

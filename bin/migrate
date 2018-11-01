@@ -11,4 +11,4 @@ if [ -f ./data/.installed_version ] && [ ! -f ./data/.krab/installed_version ]; 
     mv ./data/.installed_version ./data/.krab/installed_version
 fi
 
-./vendor/krab/bin/krab migrate-upgrade ./data/.krab ./migrations
+./vendor/krab/bin/krab migrate ./data/.krab ./migrations

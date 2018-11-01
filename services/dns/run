@@ -2,10 +2,9 @@
 
 set -Eeuo pipefail
 
-MAISON_HOST_IP=$(ip route show | awk '/default/ {print $3}')
+dnsmasq -u root
 
-for domain in ${MAISON_DOMAINS}; do
-    echo "$MAISON_HOST_IP $domain" >> /etc/hosts
-done
-
-dnsmasq -d
+# Launch Consul Template.
+consul-template -consul-addr="$MAISON_LOCAL_IP:8500" \
+    -template="/maison/web-services.ctmpl:/maison/web-services:/maison/reload" \
+    -log-level=debug

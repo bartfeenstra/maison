@@ -18,5 +18,5 @@ MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD=bienvenue
 set +a
 htpasswd -b ./data/services/web/htpasswd "$MAISON_TEST_HTTP_BASIC_AUTH_USERNAME" "$MAISON_TEST_HTTP_BASIC_AUTH_PASSWORD"
 
-find ./tests | grep '^\./tests/.*.test' | xargs readlink -f | xargs ./vendor/krab/bin/krab run -l
+find ./tests -type f -name '*-test' -print0 | sort -z | xargs -0 ./vendor/krab/bin/krab run -l
 

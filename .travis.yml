@@ -12,7 +12,8 @@ addons:
     - shellcheck
   hosts:
     - ci.maison
-    - git.maison
+    - consul.maison
+    - vcs.maison
     - network.maison
     - ola.maison
     - hab.maison
@@ -21,11 +22,9 @@ before_install:
   - sudo /etc/init.d/mysql stop
 
 before_script:
-  - ./bin/generate-env-passwords ./travis-ci/.env > .env
-  - ./bin/build
+  - ./bin/build-dev
   - ./bin/start
-  - ./bin/install
-  - ./bin/upgrade
+  - ./bin/migrate
 
 script:
   - ./bin/test
