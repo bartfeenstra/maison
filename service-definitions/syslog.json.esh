@@ -1,0 +1,12 @@
+<% container_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' maison_syslog_1) %>
+{
+    "name": "syslog",
+    "address": "<%= $container_ip %>",
+    "port": 514,
+    "checks": [
+        {
+            "tcp": "<%= $container_ip %>:514",
+            "interval": "2s"
+        }
+    ]
+}

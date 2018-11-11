@@ -1,0 +1,12 @@
+{
+    "name": "consul",
+    "tags": ["maison-web", "maison-web-auth"],
+    "address": "<%= $MAISON_LOCAL_IP %>",
+    "port": 8500,
+    "checks": [
+        {
+            "http": "http://<%= $MAISON_LOCAL_IP %>:8500",
+            "interval": "2s"
+        }
+    ]
+}

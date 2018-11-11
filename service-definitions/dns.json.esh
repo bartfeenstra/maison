@@ -1,0 +1,12 @@
+<% container_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' maison_dns_1) %>
+{
+    "name": "dns",
+    "address": "<%= $container_ip %>",
+    "port": 53,
+    "checks": [
+        {
+            "tcp": "<%= $container_ip %>:53",
+            "interval": "2s"
+        }
+    ]
+}

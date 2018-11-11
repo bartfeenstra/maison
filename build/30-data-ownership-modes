@@ -6,14 +6,8 @@ cd "$(dirname "$0")/.."
 
 mkdir -p ./data/services/consul
 mkdir -p ./data/services/db
-mkdir -p ./data/services/network
-mkdir -p ./data/services/vcs
 mkdir -p ./data/services/web
 mkdir -p ./data/services/web/letsencrypt
 sudo chown -R :docker ./data/services/*
 sudo chmod -R ug+rwx ./data/services/*
 touch ./data/services/web/htpasswd
-
-sudo groupadd -f -g 9001 openhab
-id -u openhab &>/dev/null || sudo useradd -u 9001 -g openhab -r -s /sbin/nologin openhab && sudo usermod -a -G openhab "$(whoami)"
-

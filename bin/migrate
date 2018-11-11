@@ -4,11 +4,4 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-# Upgrade from Krab 0.1 to 0.2.
-if [ -f ./data/.installed_version ] && [ ! -f ./data/.krab/installed_version ]; then
-    ./vendor/krab/bin/krab stdio-inform 'Upgrading from Krab 0.1 to 0.2.'
-    mkdir -p ./data/.krab
-    mv ./data/.installed_version ./data/.krab/installed_version
-fi
-
 ./vendor/krab/bin/krab migrate ./data/.krab ./migrations
