@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Test OLA.
+# Test the mail server.
 
 set -Eeuo pipefail
 
