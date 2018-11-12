@@ -1,5 +1,5 @@
 <% container_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' maison_web_1) %>
-{ocker ps
+{
     "name": "web-http",
     "address": "<%= $container_ip %>",
     "port": 80,
