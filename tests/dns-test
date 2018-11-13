@@ -15,7 +15,7 @@ assert() {
 }
 
 ./vendor/bin/wait-for-it localhost:5300
-web_services="ci consul vcs network ola hab"
+web_services="consul"
 for service in $web_services; do
     retry 5 5 "assert $service"
 done
