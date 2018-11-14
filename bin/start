@@ -5,7 +5,8 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 
 if [ ! -f ./.env ]; then
-    ./bin/build
+    ./vendor/krab/bin/krab stdio-alert 'No .env file exists yet. Run ./bin/build or ./bin/build-dev first.'
+    exit 2
 fi
 set -a
 . ./.env

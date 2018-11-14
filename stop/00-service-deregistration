@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Register the services.
+
+set -Eeuo pipefail
+
+cd "$(dirname "$0")/.."
+
+if [ ! -f ./run/.env ]; then
+    exit 0
+fi
+
+set -a
+. ./run/.env
+set +a
+
+address="$MAISON_LOCAL_IP:8500"
+api_root="http://$address/v1"
+./vendor/bin/wait-for-it "$address"
+while read -r service_name; do
+    curl -f -X PUT --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" "$api_root/agent/service/deregister/$service_name"
+done < <(curl -f --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" "$api_root/agent/services" | jq -r '.[].ID')
+curl -f -X PUT --header "X-Consul-Token: $MAISON_CONSUL_MASTER_ACL_TOKEN_UUID" "$api_root/agent/reload"

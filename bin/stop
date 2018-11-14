@@ -4,6 +4,4 @@ set -Eeuo pipefail
 
 cd "$(dirname "$0")/.."
 
-rm -rf ./run
-
-docker-compose -p maison down --remove-orphans
+find ./stop -type f -print0 | sort -z | xargs -0 ./vendor/krab/bin/krab run
