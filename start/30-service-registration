@@ -12,7 +12,7 @@ set +a
 address="$MAISON_LOCAL_IP:8500"
 api_root="http://$address/v1"
 ./vendor/bin/wait-for-it "$address"
-for service_definition_template in ./service-definitions/*.json.esh; do
+for service_definition_template in ./services/*/consul.json.esh; do
     service_definition=$(mktemp)
     ./vendor/bin/esh -o "$service_definition" "$service_definition_template"
     service_name=$(cat "$service_definition" | jq -r '.name')
